@@ -1,7 +1,7 @@
 branches: branch.o header.o main.o err.o
 	gcc -std=c99 branch.o header.o main.o err.o -o branches
 
-branch.o: branch.h branch.c
+branch.o: branch.h err.h branch.c
 	gcc -std=c99 -c branch.c
 
 header.o: header.h header.c
