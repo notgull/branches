@@ -27,7 +27,7 @@ void print_version(int verbose) {
   if (!verbose)
     printh("Welcome to Branches vAlpha.3");
   else
-    printf("You are using: Branches Alpha.3 Revision 1\n");
+    printf("You are using: Branches Alpha.3 Revision 2\n");
 }
 
 void print_cmds() {
@@ -53,10 +53,6 @@ int main() {
     // todo: print node
     shell_tx();
     scanf("%s",cmd); 
-    if (strlen(cmd) > 1)
-    {
-      fprintf(stderr,"Invalid command, please reeneter");
-    }
     #if DEBUG
     printf("You entered: %s",cmd);
     #endif
