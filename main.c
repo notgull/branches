@@ -27,7 +27,7 @@ void print_version(int verbose) {
   if (!verbose)
     printh("Welcome to Branches vAlpha.3");
   else
-    printf("You are using: Branches Alpha.3 Revision 2\n");
+    printf("You are using: Branches Alpha.3 Revision 3\n");
 }
 
 void print_cmds() {
@@ -39,13 +39,13 @@ void print_cmds() {
   puts("h - list this help menu again");
   puts("e - exit the game");
   puts("Enter the letter and press the Enter key to use the command");
+  newline();
 }
 
 int main() {
   print_version(0);
   newline();
   print_cmds();
-  newline();
 
   int cont = 1;
   char cmd[5];
@@ -63,6 +63,9 @@ int main() {
 	break;
       case 'v':
         print_version(1);
+	break;
+      case 'h':
+        print_cmds();
 	break;
       default:
         fprintf(stderr,"Invalid command, please reenter\n");
