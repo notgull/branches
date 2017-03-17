@@ -19,14 +19,15 @@
 #include "branch.h"
 #include "header.h"
 #include "err.h"
+#include "shortcuts.h"
 #include <stdio.h>
 #include <string.h>
 
 void print_version(int verbose) {
   if (!verbose)
-    printh("Welcome to Branches vAlpha.2");
+    printh("Welcome to Branches vAlpha.3");
   else
-    printf("You are using: Branches Alpha.2 Revision 1");
+    printf("You are using: Branches Alpha.3");
 }
 
 void print_cmds() {
@@ -40,17 +41,35 @@ void print_cmds() {
   puts("Enter the letter and press the Enter key to use the command");
 }
 
-void newline() {
-  printf("\n");
-}
-
 int main() {
   print_version(0);
   newline();
   print_cmds();
   newline();
 
-  
+  int cont = 1;
+  char cmd[5];
+  do {
+    // todo: print node
+    shell_tx();
+    scanf("%s",cmd); 
+    if (strlen(cmd) > 1)
+    {
+      fprintf(stderr,"Invalid command, please reeneter");
+    }
+    #if DEBUG
+    printf("You entered: %s",cmd);
+    #endif
+    switch (cmd[0]) {
+      case 'e':
+        printf("Exiting Branches...\n");
+	cont = 0;
+	break;
+      default:
+        fprintf(stderr,"Invalid command, please reenter");
+	break;
+    }
+  } while (cont);
 
   return 0;
 }
