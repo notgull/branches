@@ -18,6 +18,7 @@
 
 #include "branch.h"
 #include "err.h"
+#include "shortcuts.h"
 #include <stdio.h>
 
 branch *brCreate(char *b1, char *b2, char *txt) {
@@ -73,4 +74,11 @@ int brSetBranch2(branch *br, branch *value) {
     return 0;
   br->branch2 = value;
   return 1;
+}
+
+void brPrint(branch *br) {
+  puts(br->txt);
+  printf("Option 1: %s\n",br->b1);
+  printf("Option 2: %s\n",br->b2);
+  newline();
 }

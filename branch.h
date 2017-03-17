@@ -47,3 +47,5 @@ branch *brGetBranch2(branch *br);
 int brSetBranch1(branch *br, branch *value);
 
 int brSetBranch2(branch *br, branch *value);
+
+void brPrint(branch *br);
