@@ -27,7 +27,7 @@ void print_version(int verbose) {
   if (!verbose)
     printh("Welcome to Branches vAlpha.3");
   else
-    printf("You are using: Branches Alpha.3 Revision 5\n");
+    printf("You are using: Branches Alpha.3 Revision 6\n");
 }
 
 void print_cmds() {
@@ -46,6 +46,8 @@ int main() {
   newline();
   print_cmds();
   newline();
+
+  branch *root = brCreate("Take the left path", "Take the right path", "You come across a fork in the road.");
 
   int cont = 1;
   char cmd[5];
@@ -66,6 +68,9 @@ int main() {
 	break;
       case 'h':
         print_cmds();
+	break;
+      case 'p':
+        brPrint(root);
 	break;
       default:
         fprintf(stderr,"Invalid command, please reenter\n");
