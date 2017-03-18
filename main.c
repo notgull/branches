@@ -25,15 +25,16 @@
 
 void print_version(int verbose) {
   if (!verbose)
-    printh("Welcome to Branches v1.0");
+    printh("Welcome to Branches v1.1");
   else
-    printf("You are using: Branches v1.0\n");
+    printf("You are using: Branches v1 Revision 1\n");
 }
 
 void print_cmds() {
   puts("List of commands:");
   puts("1 - select branch number one");
   puts("2 - select branch number two");
+  puts("r - return to start");
   puts("p - reprints the current node to the console");
   puts("v - prints version information");
   puts("h - list this help menu again");
@@ -88,6 +89,10 @@ int main() {
         current = brGetBranch1(*(current));
       case 'p':
         brPrint(*(current));
+	break;
+      case 'r':
+        current = &root;
+	brPrint(root);
 	break;
       default:
         fprintf(stderr,"Invalid command, please reenter\n");
