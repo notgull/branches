@@ -25,9 +25,9 @@
 
 void print_version(int verbose) {
   if (!verbose)
-    printh("Welcome to Branches vBeta.1");
+    printh("Welcome to Branches v1.0");
   else
-    printf("You are using: Branches Beta.1 Revision 2\n");
+    printf("You are using: Branches v1.0\n");
 }
 
 void print_cmds() {
