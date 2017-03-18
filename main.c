@@ -19,7 +19,7 @@
 #include "header.h"
 #include "err.h"
 #include "shortcuts.h"
-#include "initialtree.h"
+#include "branch.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -27,7 +27,7 @@ void print_version(int verbose) {
   if (!verbose)
     printh("Welcome to Branches vBeta.1");
   else
-    printf("You are using: Branches Beta.1 Revision 1\n");
+    printf("You are using: Branches Beta.1 Revision 1 MR 1\n");
 }
 
 void print_cmds() {
