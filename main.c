@@ -27,7 +27,7 @@ void print_version(int verbose) {
   if (!verbose)
     printh("Welcome to Branches vBeta.1");
   else
-    printf("You are using: Branches Beta.1 Revision 1 MR 1\n");
+    printf("You are using: Branches Beta.1 Revision 2\n");
 }
 
 void print_cmds() {
@@ -48,6 +48,7 @@ int main() {
   newline();
 
   branch root = brCreate("Take the left path", "Take the right path", "You come across a fork in the road.");
+  brPrint(root);
 //  initializeTree(&root);
   branch br1;
   branch br2;
@@ -58,7 +59,7 @@ int main() {
   brSetBranch2(&root,&br2);
  
   branch *current = &root;
-
+  
   int cont = 1;
   char cmd[5];
   do {
