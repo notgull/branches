@@ -66,6 +66,7 @@ int brSetBranch1(branch *br, branch *value) {
   if (br->branch1)
     return 0;
   br->branch1 = value;
+  br->hasB1 = 1;
   return 1;
 }
 
@@ -73,6 +74,7 @@ int brSetBranch2(branch *br, branch *value) {
   if (br->branch2)
     return 0;
   br->branch2 = value;
+  br->hasB2 = 1;
   return 1;
 }
 

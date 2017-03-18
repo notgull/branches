@@ -16,18 +16,18 @@
  * =====================================================================================
  */
 
-#include "branch.h"
 #include "header.h"
 #include "err.h"
 #include "shortcuts.h"
+#include "initialtree.h"
 #include <stdio.h>
 #include <string.h>
 
 void print_version(int verbose) {
   if (!verbose)
-    printh("Welcome to Branches vAlpha.3");
+    printh("Welcome to Branches vAlpha.4");
   else
-    printf("You are using: Branches Alpha.4\n");
+    printf("You are using: Branches Alpha.4 Revision 1\n");
 }
 
 void print_cmds() {
@@ -48,6 +48,7 @@ int main() {
   newline();
 
   branch root = brCreate("Take the left path", "Take the right path", "You come across a fork in the road.");
+  initializeTree(&root);
 
   int cont = 1;
   char cmd[5];
