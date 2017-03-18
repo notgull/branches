@@ -21,45 +21,45 @@
 #include "shortcuts.h"
 #include <stdio.h>
 
-branch *brCreate(char *b1, char *b2, char *txt) {
+branch brCreate(char *b1, char *b2, char *txt) {
   branch br = {0,0,b1,b2,txt,NULL,NULL};
-  return &br;
+  return br;
 }
 
-int brHasBranch1(branch *br) {
-  return br->hasB1;
+int brHasBranch1(branch br) {
+  return br.hasB1;
 }
 
-int brHasBranch2(branch *br) {
-  return br->hasB2;
+int brHasBranch2(branch br) {
+  return br.hasB2;
 }
 
-char *brGetBranch1Text(branch *br) {
-  return br->b1;
+char *brGetBranch1Text(branch br) {
+  return br.b1;
 }
 
-char *brGetBranch2Text(branch *br) {
-  return br->b2;
+char *brGetBranch2Text(branch br) {
+  return br.b2;
 }
 
-char *brGetText(branch *br) {
-  return br->txt;
+char *brGetText(branch br) {
+  return br.txt;
 }
 
-branch *brGetBranch1(branch *br) {
-  if (!(br->branch1))
+branch *brGetBranch1(branch br) {
+  if (!(br.branch1))
   {
     error("Attempted to access null branch",0);
   }
-  return br->branch1;
+  return br.branch1;
 }
 
-branch *brGetBranch2(branch *br) {
-  if (!(br->branch2))
+branch *brGetBranch2(branch br) {
+  if (!(br.branch2))
   {
     error("Attempted to access null branch",0);
   }
-  return br->branch2;
+  return br.branch2;
 }
 
 int brSetBranch1(branch *br, branch *value) {
@@ -76,9 +76,9 @@ int brSetBranch2(branch *br, branch *value) {
   return 1;
 }
 
-void brPrint(branch *br) {
-  puts(br->txt);
-  printf("Option 1: %s\n",br->b1);
-  printf("Option 2: %s\n",br->b2);
+void brPrint(branch br) {
+  puts(br.txt);
+  printf("Option 1: %s\n",br.b1);
+  printf("Option 2: %s\n",br.b2);
   newline();
 }
