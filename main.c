@@ -20,14 +20,15 @@
 #include "err.h"
 #include "shortcuts.h"
 #include "branch.h"
+#include "loop.h"
 #include <stdio.h>
 #include <string.h>
 
 void print_version(int verbose) {
   if (!verbose)
-    printh("Welcome to Branches v1.2");
+    printh("Welcome to Branches v1.3");
   else
-    printf("You are using: Branches v1 Revision 2\n");
+    printf("You are using: Branches v1 Revision 3\n");
 }
 
 void print_cmds() {
@@ -88,24 +89,27 @@ int main() {
 	  char response[4];
 	  int mkNewNode = 1;
 	  scanf("%3s",response);
+	  beginLoop();
 	  do {
             if (tolower(response[0]) == 'y')
 	    {
-	      break;
+	      
+	      stopLoop();
 	    }
 	    else if (tolower(response[0]) == 'n') {
 	      mkNewNode = 0;
 	      current = &root;
-	      break;
+	      stopLoop();
 	    }
 	    else {
 	      puts("Invalid response.");
 	    }
-	  } while (1);
+	  } while (isLooping());
 	  if (!mkNewNode)
 	    break;
 
 	  // let's create a new node!
+	  puts("TODO: Node creation");
 	}
 	brPrint(*(current));
 	break;

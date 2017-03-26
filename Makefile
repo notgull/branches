@@ -1,5 +1,5 @@
-branches: branch.o header.o main.o err.o shortcuts.o
-	gcc -std=c99 branch.o header.o main.o err.o initialtree.o shortcuts.o -o branches
+branches: branch.o header.o main.o loop.o err.o shortcuts.o
+	gcc -std=c99 branch.o header.o main.o err.o loop.o shortcuts.o -o branches
 
 branch.o: branch.h err.h shortcuts.h branch.c
 	gcc -std=c99 -c branch.c
@@ -13,5 +13,8 @@ err.o: err.h err.c
 shortcuts.o: shortcuts.h shortcuts.c
 	gcc -std=c99 -c shortcuts.c
 
-main.o: main.h header.h branch.h shortcuts.h err.h main.c
+loop.o: loop.h loop.c
+	gcc -std=c99 -c loop.c
+
+main.o: main.h header.h branch.h loop.h shortcuts.h err.h main.c
 	gcc -std=c99 -c main.c
