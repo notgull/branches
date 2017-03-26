@@ -25,9 +25,9 @@
 
 void print_version(int verbose) {
   if (!verbose)
-    printh("Welcome to Branches v1.1");
+    printh("Welcome to Branches v1.2");
   else
-    printf("You are using: Branches v1 Revision 1\n");
+    printf("You are using: Branches v1 Revision 2\n");
 }
 
 void print_cmds() {
@@ -64,7 +64,6 @@ int main() {
   int cont = 1;
   char cmd[5];
   do {
-    // todo: print node
     shell_tx();
     scanf("%s",cmd); 
     #if DEBUG
@@ -82,11 +81,62 @@ int main() {
         print_cmds();
 	break;
       case '2':
-        current = brGetBranch2(*(current));
+        if (brHasBranch2(*(current)))
+          current = brGetBranch2(*(current));
+	else {
+	  printf("You have reached the end. Would you like to create a new node? [Y/n] ");
+	  char response[4];
+	  int mkNewNode = 1;
+	  scanf("%3s",response);
+	  do {
+            if (tolower(response[0]) == 'y')
+	    {
+	      break;
+	    }
+	    else if (tolower(response[0]) == 'n') {
+	      mkNewNode = 0;
+	      current = &root;
+	      break;
+	    }
+	    else {
+	      puts("Invalid response.");
+	    }
+	  } while (1);
+	  if (!mkNewNode)
+	    break;
+
+	  // let's create a new node!
+	}
 	brPrint(*(current));
 	break;
       case '1':
-        current = brGetBranch1(*(current));
+        if (brHasBranch1(*(current)))
+          current = brGetBranch1(*(current));
+	else {
+	  printf("You have reached the end. Would you like to create a new node? [Y/n] ");
+	  char response[4];
+	  int mkNewNode = 1;
+	  fgets(response,sizeof(response),stdin);
+	  do {
+            if (tolower(response[0]) == 'y')
+	    {
+	      break;
+	    }
+	    else if (tolower(response[0]) == 'n') {
+	      mkNewNode = 0;
+	      current = &root;
+	      break;
+	    }
+	    else {
+	      puts("Invalid response.");
+              scanf("%3s",response);
+	    }
+	  } while (1);
+	  if (!mkNewNode)
+	    break;
+
+	  // let's create a new node!
+	}
       case 'p':
         brPrint(*(current));
 	break;
