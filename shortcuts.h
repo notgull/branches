@@ -19,3 +19,7 @@
 void newline();
 
 void shell_tx();
+
+int yesno(char *question);
+
+void getInput(char *inputGet, char *output);
