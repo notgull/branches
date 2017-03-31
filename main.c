@@ -29,9 +29,9 @@
 // prints version information
 void print_version(int verbose) {
   if (!verbose)
-    printh("Welcome to Branches v1.5");
+    printh("Welcome to Branches v1.5.1");
   else
-    printf("You are using: Branches Version 1 Revision 5\n");
+    printf("You are using: Branches Version 1 Revision 5 MR 1\n");
 }
 
 // prints help menu
@@ -56,6 +56,7 @@ branch usr_input_branch() {
   char dummy[4];
 
   do {
+    newline();
     /*
     printf("Enter main text: ");
     //scanf("%s",main_text);
@@ -79,15 +80,16 @@ branch usr_input_branch() {
     getInput("Enter main text",main_text);
     getInput("Enter Option 1",b1);
     getInput("Enter Option 2",b2);
-
+    newline();
     puts("Here is your branch:");
-    
+    newline();
     branch br = brCreate(b1,b2,main_text);
     //branch br = brCreate("test","test",main_text);
     brPrint(br);
-
-    if (yesno("Is this okay?"))
+    if (yesno("Is this okay?")) {
+      newline();
       return br;
+    }
   } while (1); 
   // inaccessible code
   error("Inaccessible code",0);
