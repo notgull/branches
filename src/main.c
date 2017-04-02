@@ -16,10 +16,10 @@
  * =====================================================================================
  */
 
-#include "header.h"
 #include "err.h"
 #include "shortcuts.h"
 #include "main.h"
+#include "branches_config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -29,9 +29,9 @@
 // prints version information
 void print_version(int verbose) {
   if (!verbose)
-    printh("Welcome to Branches v2.1");
+    printf("====== Welcome to Branches v%i.%i.%i ======",br_VERSION,br_REVISION,br_MINOR_REVISION);
   else
-    printf("You are using: Branches Version 2 Revision 1\n");
+    printf("You are using: Branches Version %i Revision %i Minor Revision %i\n",br_VERSION,br_REVISION,br_MINOR_REVISION);
 }
 
 // prints help menu

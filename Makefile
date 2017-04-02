@@ -177,33 +177,6 @@ src/err.c.s:
 	$(MAKE) -f CMakeFiles/branches.dir/build.make CMakeFiles/branches.dir/src/err.c.s
 .PHONY : src/err.c.s
 
-src/header.o: src/header.c.o
-
-.PHONY : src/header.o
-
-# target to build an object file
-src/header.c.o:
-	$(MAKE) -f CMakeFiles/branches.dir/build.make CMakeFiles/branches.dir/src/header.c.o
-.PHONY : src/header.c.o
-
-src/header.i: src/header.c.i
-
-.PHONY : src/header.i
-
-# target to preprocess a source file
-src/header.c.i:
-	$(MAKE) -f CMakeFiles/branches.dir/build.make CMakeFiles/branches.dir/src/header.c.i
-.PHONY : src/header.c.i
-
-src/header.s: src/header.c.s
-
-.PHONY : src/header.s
-
-# target to generate assembly for a file
-src/header.c.s:
-	$(MAKE) -f CMakeFiles/branches.dir/build.make CMakeFiles/branches.dir/src/header.c.s
-.PHONY : src/header.c.s
-
 src/loop.o: src/loop.c.o
 
 .PHONY : src/loop.o
@@ -300,9 +273,6 @@ help:
 	@echo "... src/err.o"
 	@echo "... src/err.i"
 	@echo "... src/err.s"
-	@echo "... src/header.o"
-	@echo "... src/header.i"
-	@echo "... src/header.s"
 	@echo "... src/loop.o"
 	@echo "... src/loop.i"
 	@echo "... src/loop.s"

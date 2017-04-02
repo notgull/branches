@@ -1,0 +1,3 @@
+#define br_VERSION @br_VERSION@
+#define br_REVISION @br_REVISION@
+#define br_MINOR_REVISION @br_MINOR_REVISION@
