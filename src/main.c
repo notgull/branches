@@ -29,9 +29,9 @@
 // prints version information
 void print_version(int verbose) {
   if (!verbose)
-    printh("Welcome to Branches v2.0");
+    printh("Welcome to Branches v2.1");
   else
-    printf("You are using: Branches Version 2\n");
+    printf("You are using: Branches Version 2 Revision 1\n");
 }
 
 // prints help menu
