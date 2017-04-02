@@ -20,5 +20,4 @@
 
 void print_version(int verbose);
 void print_cmds();
-branch usr_input_branch();
-void newline();
+branch *usr_input_branch();

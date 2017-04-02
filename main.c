@@ -29,9 +29,9 @@
 // prints version information
 void print_version(int verbose) {
   if (!verbose)
-    printh("Welcome to Branches v1.5.1");
+    printh("Welcome to Branches v2.0");
   else
-    printf("You are using: Branches Version 1 Revision 5 MR 1\n");
+    printf("You are using: Branches Version 2\n");
 }
 
 // prints help menu
@@ -48,7 +48,7 @@ void print_cmds() {
 }
 
 // make a new branch from user input
-branch usr_input_branch() {
+branch *usr_input_branch() {
   char main_text[INPUT_MAX_SIZE];
   char b1[INPUT_MAX_SIZE];
   char b2[INPUT_MAX_SIZE];
@@ -83,7 +83,7 @@ branch usr_input_branch() {
     newline();
     puts("Here is your branch:");
     newline();
-    branch br = brCreate(b1,b2,main_text);
+    branch *br = brCreate(b1,b2,main_text);
     //branch br = brCreate("test","test",main_text);
     brPrint(br);
     if (yesno("Is this okay?")) {
@@ -105,20 +105,20 @@ int main() {
   newline();
 
   // initial branch
-  branch root = brCreate("Take the left path", "Take the right path", "You come across a fork in the road.");
+  branch *root = brCreate("Take the left path", "Take the right path", "You come across a fork in the road.");
   brPrint(root);
 //  initializeTree(&root);
-  branch br1;
-  branch br2;
+  branch *br1;
+  branch *br2;
   
   // other two branches
   br1 = brCreate("Knock on the door","Peer through the window","You come across a house on the prarie.");
   br2 = brCreate("Cross the bridge","Jump into the water","You come across a bridge crossing a river.");
-  brSetBranch1(&root,&br1);
-  brSetBranch2(&root,&br2);
+  brSetBranch1(root,br1);
+  brSetBranch2(root,br2);
  
   // current branch
-  branch *current = &root;
+  branch *current = root;
   
   // don't use loop.h for this; loop.h is needed for inner loops
   // also, this is the main loop
@@ -151,37 +151,37 @@ int main() {
         print_cmds();
 	break;
       case '2':
-        if (brHasBranch2(*(current)))
-          current = brGetBranch2(*(current));
+        if (brHasBranch2(current))
+          current = brGetBranch2(current);
 	else {
 	  if (yesno("You have reached the end. Would you like to create a new node?")) {
-	      branch br = usr_input_branch();
-	      brSetBranch2(current,&br);
-	      current = &br;
+	      branch *br = usr_input_branch();
+	      brSetBranch2(current,br);
+	      current = br;
 	  }
 	  else
-	      current = &root;
+	      current = root;
 	}
-	brPrint(*(current));
+	brPrint(current);
 	break;
       case '1':
-        if (brHasBranch1(*(current)))
-          current = brGetBranch1(*(current));
+        if (brHasBranch1(current))
+          current = brGetBranch1((current));
 	else {
 	  if (yesno("You have reached the end. Would you like to create a new node?")) {
-	      branch br = usr_input_branch();
-	      brSetBranch1(current,&br);
-	      current = &br;
+	      branch *br = usr_input_branch();
+	      brSetBranch1(current,br);
+	      current = br;
 	  }
 	  else
-	      current = &root;
+	      current = root;
 	  
 	}
       case 'p':
-        brPrint(*(current));
+        brPrint(current);
 	break;
       case 'r':
-        current = &root;
+        current = root;
 	brPrint(root);
 	break;
       default:
