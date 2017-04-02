@@ -110,7 +110,9 @@ int main() {
 //  initializeTree(&root);
   branch *br1;
   branch *br2;
-  
+ 
+  branch *screw_you_thomas = brCreate("Drop kick it","Stab someone","You pick up the fork");
+
   // other two branches
   br1 = brCreate("Knock on the door","Peer through the window","You come across a house on the prarie.");
   br2 = brCreate("Cross the bridge","Jump into the water","You come across a bridge crossing a river.");
@@ -184,6 +186,13 @@ int main() {
         current = root;
 	brPrint(root);
 	break;
+      case '3':
+        if (current == root)
+	{
+	  current = screw_you_thomas;
+	  brPrint(current);
+	  break;
+	}
       default:
         fprintf(stderr,"Invalid command, please reenter\n");
 	break;

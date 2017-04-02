@@ -9,7 +9,7 @@ add_definitions(${GCC_COVERAGE_COMPILE_FLAGS})
 
 # set version information
 set(br_VERSION "2")
-set(br_REVISION "2")
+set(br_REVISION "3")
 set(br_MINOR_REVISION "0")
 
 # get sources
