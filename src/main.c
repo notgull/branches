@@ -189,6 +189,7 @@ int main() {
 	  break;
 	}
 	current = brGetPrevious(current);
+	brPrint(current);
 	break;
       case 'r':
         current = root;

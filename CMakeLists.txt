@@ -8,8 +8,8 @@ set(GCC_COVERAGE_COMPILE_FLAGS "-std=c99 -Iinclude")
 add_definitions(${GCC_COVERAGE_COMPILE_FLAGS})
 
 # set version information
-set(br_VERSION "2")
-set(br_REVISION "4")
+set(br_VERSION "3")
+set(br_REVISION "0")
 set(br_MINOR_REVISION "0")
 
 # get sources
@@ -23,3 +23,6 @@ configure_file (
 
 # compile sources
 add_executable(branches ${SOURCES})
+
+# add installation rules
+install(TARGETS branches DESTINATION bin)
