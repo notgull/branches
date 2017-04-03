@@ -22,6 +22,7 @@ typedef struct br_struct {
   const char *txt;
   struct br_struct *branch1;
   struct br_struct *branch2;
+  struct br_struct *prev;
 #ifdef DEBUG
   int uuid;
 #endif
@@ -58,3 +59,5 @@ void brPrint(branch *br);
 //void initializeTree(branch *root);
 
 void brRelease(branch *br);
+
+branch *brGetPrevious(branch *br);

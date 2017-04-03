@@ -40,6 +40,7 @@ void print_cmds() {
   puts("1 - select branch number one");
   puts("2 - select branch number two");
   puts("r - return to start");
+  puts("o - go backwards by one node");
   puts("p - reprints the current node to the console");
   puts("v - prints version information");
   puts("h - list this help menu again");
@@ -181,6 +182,13 @@ int main() {
 	}
       case 'p':
         brPrint(current);
+	break;
+      case 'o': 
+        if (current == root) {
+	  puts("Unable to reach previous node");
+	  break;
+	}
+	current = brGetPrevious(current);
 	break;
       case 'r':
         current = root;

@@ -40,6 +40,7 @@ branch *brCreate(char *b1, char *b2, char *txt) {
   nextUuid = nextUuid + 1;
   br->uuid = nextUuid;
 #endif
+  br->prev = NULL;
   return br;
 }
 
@@ -88,6 +89,7 @@ int brSetBranch1(branch *br, branch *value) {
     return 0;
   br->branch1 = value;
 //  br->hasB1 = 1;
+  value->prev = br;
   return 1;
 }
 
@@ -96,6 +98,7 @@ int brSetBranch2(branch *br, branch *value) {
     return 0;
   br->branch2 = value;
 //  br->hasB2 = 1;
+  value->prev = br;
   return 1;
 }
 
@@ -126,4 +129,8 @@ void brRelease(branch *br) {
       free(br->txt);
     free(br);
   }
+}
+
+branch *brGetPrevious(branch *br) {
+  return br->prev;
 }
