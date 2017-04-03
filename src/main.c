@@ -110,11 +110,11 @@ int main() {
     puts("-1: Singleplayer Mode");
     puts("-2: Connect to TBranches Server");
     puts("-3: Connect to other server");
-
+    newline();
+    shell_tx();
     scanf("%4s",cmd);
     switch (cmd[0]) {
       case '1':
-        newline();
 	thing = 0;
 	break;
       case '2':
@@ -126,7 +126,7 @@ int main() {
 	break;
     }
   } while (thing);
-
+  newline();
   print_cmds();
   newline();
 
