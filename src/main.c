@@ -102,6 +102,31 @@ int main() {
   // introduce the help menu and version info
   print_version(0);
   newline();
+
+  puts("Select mode:");
+  char cmd[5];
+  int thing = 1;
+  do {
+    puts("-1: Singleplayer Mode");
+    puts("-2: Connect to TBranches Server");
+    puts("-3: Connect to other server");
+
+    scanf("%4s",cmd);
+    switch (cmd[0]) {
+      case '1':
+        newline();
+	thing = 0;
+	break;
+      case '2':
+      case '3':
+        puts("Internet connection not implemented as of this version.");
+      default:
+        puts("Invalid command");
+	scanf("%4s",cmd);
+	break;
+    }
+  } while (thing);
+
   print_cmds();
   newline();
 
@@ -126,7 +151,7 @@ int main() {
   // don't use loop.h for this; loop.h is needed for inner loops
   // also, this is the main loop
   int cont = 1;
-  char cmd[5];
+  
   do {
     // this makes the > thing
     shell_tx();
