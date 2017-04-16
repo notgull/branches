@@ -9,8 +9,9 @@ add_definitions(${GCC_COVERAGE_COMPILE_FLAGS})
 
 # set version information
 set(br_VERSION "3")
-set(br_REVISION "1")
-set(br_MINOR_REVISION "1")
+set(br_REVISION "2")
+set(br_MINOR_REVISION "0")
+set(br_CHANGELOG "\"-Added this nifty changelog\\n-Added a save function\\n-Removed swear words from the code\\n\"")
 
 # get sources
 file(GLOB SOURCES "src/*.c")

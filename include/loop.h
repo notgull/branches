@@ -16,8 +16,13 @@
  * =====================================================================================
  */
 
+#ifndef LOOP_H
+#define LOOP_H
+
 void beginLoop();
 
 int isLooping();
 
 void stopLoop();
+
+#endif

@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  shortcuts.h
+ *       Filename:  brstring.h
  *
  *    Description:  
  *
  *        Version:  1.0
- *        Created:  03/16/2017 08:49:36 AM
+ *        Created:  04/07/2017 03:29:17 PM
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,17 +16,13 @@
  * =====================================================================================
  */
 
-#ifndef SHORTCUTS_H
-#define SHORTCUTS_H
+#ifndef BRSTRING_H
+#define BRSTRING_H
 
-void newline();
+#include "branch.h"
 
-void shell_tx();
+char *brToString(branch *br);
 
-int yesno(char *question);
+branch *brFromString(char *s);
 
-void getInput(char *inputGet, char *output);
-
-//#define DEBUG
-
-#endif
+#endif BRSTRING_H

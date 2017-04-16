@@ -16,4 +16,9 @@
  * =====================================================================================
  */
 
+#ifndef ERR_H
+#define ERR_H
+
 void error(char *msg, int showErrno);
+
+#endif

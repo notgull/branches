@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  shortcuts.h
+ *       Filename:  splitstr.h
  *
  *    Description:  
  *
  *        Version:  1.0
- *        Created:  03/16/2017 08:49:36 AM
+ *        Created:  04/12/2017 03:16:41 PM
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,17 +16,6 @@
  * =====================================================================================
  */
 
-#ifndef SHORTCUTS_H
-#define SHORTCUTS_H
+#include <stdio.h>
 
-void newline();
-
-void shell_tx();
-
-int yesno(char *question);
-
-void getInput(char *inputGet, char *output);
-
-//#define DEBUG
-
-#endif
+char **str_split(char *a_str, const char a_delim, size_t *str_num);

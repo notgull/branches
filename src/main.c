@@ -20,6 +20,7 @@
 #include "shortcuts.h"
 #include "main.h"
 #include "branches_config.h"
+#include "saves.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -42,7 +43,9 @@ void print_cmds() {
   puts("r - return to start");
   puts("o - go backwards by one node");
   puts("p - reprints the current node to the console");
+  puts("s - saves current tree to a file");
   puts("v - prints version information");
+  puts("c - prints change log");
   puts("h - list this help menu again");
   puts("e - exit the game");
   puts("Enter the letter and press the Enter key to use the command");
@@ -94,6 +97,7 @@ branch *usr_input_branch() {
   } while (1); 
   // inaccessible code
   error("Inaccessible code",0);
+  // even more inaccessible code
   return brCreate("","","");
 }
 
@@ -114,6 +118,9 @@ int main() {
     shell_tx();
     scanf("%4s",cmd);
     switch (cmd[0]) {
+      case 'e':
+        puts("Exiting branches...");
+        return 0;
       case '1':
 	thing = 0;
 	break;
@@ -122,6 +129,7 @@ int main() {
         puts("Internet connection not implemented as of this version.");
       default:
         puts("Invalid command");
+        shell_tx();
 	scanf("%4s",cmd);
 	break;
     }
@@ -137,7 +145,7 @@ int main() {
   branch *br1;
   branch *br2;
  
-  branch *screw_you_thomas = brCreate("Drop kick it","Stab someone","You pick up the fork");
+  branch *third_tree = brCreate("Drop kick it","Stab someone","You pick up the fork");
 
   // other two branches
   br1 = brCreate("Knock on the door","Peer through the window","You come across a house on the prarie.");
@@ -158,7 +166,7 @@ int main() {
     // get the command
     scanf("%s",cmd); 
 
-    // outdated debugging crap
+    // outdated debugging stuff
     #if DEBUG
     printf("You entered: %s",cmd);
     #endif
@@ -208,6 +216,10 @@ int main() {
       case 'p':
         brPrint(current);
 	break;
+      case 'c':
+        printf("New in Branches v%i.%i.%i...\n",br_VERSION,br_REVISION,br_MINOR_REVISION);
+        printf("%s",br_CHANGELOG);
+        break;
       case 'o': 
         if (current == root) {
 	  puts("Unable to reach previous node");
@@ -220,10 +232,20 @@ int main() {
         current = root;
 	brPrint(root);
 	break;
+      case 's':
+        if (yesno("Do you really want to save your progress?")) {
+          char filename[256];
+          printf("Enter filename: ");
+          fgets(filename,256,stdin);
+          printf("Saving progress to %s...\n",filename);
+          brSaveToFile(root,filename);
+          puts("Sucessfully saved file!");
+        }
+        break;
       case '3':
         if (current == root)
 	{
-	  current = screw_you_thomas;
+	  current = third_tree;
 	  brPrint(current);
 	  break;
 	}
@@ -232,6 +254,6 @@ int main() {
 	break;
     }
   } while (cont);
-
+  brRelease(root);
   return 0;
 }

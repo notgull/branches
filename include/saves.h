@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  shortcuts.h
+ *       Filename:  saves.h
  *
  *    Description:  
  *
  *        Version:  1.0
- *        Created:  03/16/2017 08:49:36 AM
+ *        Created:  04/05/2017 09:37:05 AM
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,17 +16,13 @@
  * =====================================================================================
  */
 
-#ifndef SHORTCUTS_H
-#define SHORTCUTS_H
+#ifndef SAVES_H
+#define SAVES_H
 
-void newline();
+#include "brstring.h"
 
-void shell_tx();
+int brSaveToFile(branch *br, char *filename);
 
-int yesno(char *question);
-
-void getInput(char *inputGet, char *output);
-
-//#define DEBUG
+branch *brLoadFromFile(char *filename);
 
 #endif

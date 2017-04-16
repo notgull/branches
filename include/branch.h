@@ -16,6 +16,9 @@
  * =====================================================================================
  */
 
+#ifndef BRANCH_H
+#define BRANCH_H
+
 typedef struct br_struct {
   const char *b1;
   const char *b2;
@@ -61,3 +64,5 @@ void brPrint(branch *br);
 void brRelease(branch *br);
 
 branch *brGetPrevious(branch *br);
+
+#endif
