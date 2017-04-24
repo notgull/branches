@@ -65,4 +65,6 @@ void brRelease(branch *br);
 
 branch *brGetPrevious(branch *br);
 
+branch *brDup(branch *br);
+
 #endif

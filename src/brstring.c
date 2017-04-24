@@ -201,6 +201,11 @@ char *brToString_Internal(branch *br, int indent) {
   printf("br_b2_L is %i\n",br_b2_L);
   printf("br_b2 is \"%s\"\n",brGetBranch2Text(br));
 #endif
+/*  char *add = strdup(brGetBranch2Text(br)); 
+  char *add_pos;
+  if ((add_pos = strchr(add,'\n')) != NULL)
+    *add_pos = '\0';
+*/
   strcat(the_string,brGetBranch2Text(br));
   current_pos += br_b2_L;
 #ifdef DEBUG
@@ -270,6 +275,7 @@ char *brToString_Internal(branch *br, int indent) {
   //
   // format changed, we need a newline
   strcat(the_string,"\n");
+
 #ifdef DEBUG
   puts("--- Final String is as follows: ---");
   printf("%s\n",the_string);
@@ -282,89 +288,3 @@ char *brToString(branch *br) {
   return brToString_Internal(br,0);
 }
 
-int getLineIndent(char *str) {
-  int indent = 0;
-  char current = *(str);
-  while (current == ' ') {
-    indent++;
-    current = *(str + indent);
-  }
-  return indent;
-}
-
-branch *brFromString_Internal(char *str, int indent) {
-  int readPos = indent;;
-  int pos = 0;
-  char current = *(str + readPos);
-
-  char txt[256];
-  char b1[256];
-  char b2[256];
-
-  while (current != '/') {
-    txt[pos] = current;
-    pos++;
-    readPos++;
-    current = *(str + readPos);
-  }
-
-  pos = 0;
-  readPos++;
-  while (current != '/') {
-    b1[pos] = current;
-    pos++;
-    readPos++;
-    current = *(str + readPos);
-  }
-
-  pos = 0;
-  readPos++;
-  while (current != '\n' && current != '\0') {
-    b2[pos] = current;
-    pos++;
-    readPos++;
-    current = *(str + readPos);
-  }
-
-  branch *br = brCreate(b1,b2,txt);
-  if (current == '\0')
-    return br;
-
-  int targetIndent = indent + 1;
-  int newlines = 0;
-  for(int i=0 ; *(str+1)!='\0' ; i++)
-    if((str+i)=='\n')
-      newlines++;
-  newlines++;
-   
-  size_t str_num;
-  char **split_lines = str_split(str,'\n',&str_num);
-  char *b1_l = 0;
-  char *b2_l = 0;
-
-  for (int i = 0; i < str_num; i++) {
-    if (getLineIndent(*(split_lines + i)) == targetIndent) {
-      if (b1_l) {
-        b2_l = *(split_lines + i);
-        break;
-      } 
-      else
-        b1_l = *(split_lines + i);
-    }
-  }
-
-  if (!(b1_l) && !(b2_l))
-    return br;
-
-  branch *br1 = brFromString_Internal(b1_l,targetIndent);
-  branch *br2 = brFromString_Internal(b2_l,targetIndent);
-
-  brSetBranch1(br,br1);
-  brSetBranch2(br,br2);
-
-  return br;
-}
-
-branch *brFromString(char *str) {
-  return brFromString_Internal(str,0);
-}

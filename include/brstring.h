@@ -23,6 +23,4 @@
 
 char *brToString(branch *br);
 
-branch *brFromString(char *s);
-
 #endif BRSTRING_H

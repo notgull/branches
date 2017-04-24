@@ -234,6 +234,8 @@ int main() {
 	break;
       case 's':
         if (yesno("Do you really want to save your progress?")) {
+          char dummy[3];
+          fgets(dummy,3,stdin);
           char filename[256];
           printf("Enter filename: ");
           fgets(filename,256,stdin);
@@ -242,6 +244,11 @@ int main() {
           puts("Sucessfully saved file!");
         }
         break;
+      case 'a':
+        char filename[256];
+        printf("Enter filename: ");
+        fgets(filename,256,stdin);
+        break; 
       case '3':
         if (current == root)
 	{
