@@ -18,9 +18,8 @@
 
 #include "err.h"
 #include "shortcuts.h"
-#include "main.h"
+#include "program.h"
 #include "branches_config.h"
-#include "saves.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -102,7 +101,7 @@ branch *usr_input_branch() {
 }
 
 // program entry point
-int main() {
+int runProgram() {
   // introduce the help menu and version info
   print_version(0);
   newline();
@@ -233,7 +232,7 @@ int main() {
 	brPrint(root);
 	break;
       case 's':
-        if (yesno("Do you really want to save your progress?")) {
+        /* if (yesno("Do you really want to save your progress?")) {
           char dummy[3];
           fgets(dummy,3,stdin);
           char filename[256];
@@ -242,12 +241,22 @@ int main() {
           printf("Saving progress to %s...\n",filename);
           brSaveToFile(root,filename);
           puts("Sucessfully saved file!");
-        }
+        } */
+        puts("Feature currently unavailible");
         break;
-      case 'a':
+      case 'a': /*  
+        printf("");
+        char dummy[3];
+        fgets(dummy,3,stdin);
         char filename[256];
         printf("Enter filename: ");
         fgets(filename,256,stdin);
+        if (filename[strlen(filename) - 1] == '\n')
+          filename[strlen(filename) - 1] = '\0';
+        root = brLoadFromFile(filename);
+        current = root;
+        brPrint(root);*/
+        puts("Feature currently unavailible");
         break; 
       case '3':
         if (current == root)

@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  splitstr.h
+ *       Filename:  main.hpp
  *
  *    Description:  
  *
  *        Version:  1.0
- *        Created:  04/12/2017 03:16:41 PM
+ *        Created:  05/01/2017 03:17:00 PM
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,6 +16,6 @@
  * =====================================================================================
  */
 
-#include <stdio.h>
-
-char **str_split(char *a_str, const char a_delim, size_t *str_num);
+extern "C" {
+  int runProgram();
+};

@@ -9,12 +9,12 @@ add_definitions(${GCC_COVERAGE_COMPILE_FLAGS})
 
 # set version information
 set(br_VERSION "3")
-set(br_REVISION "3")
+set(br_REVISION "4")
 set(br_MINOR_REVISION "0")
-set(br_CHANGELOG "\"-Fixed the save function\\n-Added a read function\\n\"")
+set(br_CHANGELOG "\"-Broke the read and write functions, tbf\\n-Switched main language from C to C++\\n\"")
 
 # get sources
-file(GLOB SOURCES "src/*.c")
+file(GLOB SOURCES "src/*")
 
 # do configuration
 configure_file (

@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  brstring.h
+ *       Filename:  main.cpp
  *
  *    Description:  
  *
  *        Version:  1.0
- *        Created:  04/07/2017 03:29:17 PM
+ *        Created:  05/01/2017 03:18:13 PM
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,11 +16,8 @@
  * =====================================================================================
  */
 
-#ifndef BRSTRING_H
-#define BRSTRING_H
+#include "main.hpp"
 
-#include "branch.h"
-
-char *brToString(branch *br);
-
-#endif BRSTRING_H
+int main() {
+  return runProgram();
+}

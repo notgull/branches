@@ -137,7 +137,9 @@ branch *brGetPrevious(branch *br) {
 
 branch *brDup(branch *br) {
   branch *clone = brCreate(strdup(brGetBranch1Text(br)),strdup(brGetBranch2Text(br)),strdup(brGetText(br)));
-  brSetBranch1(clone,brDup(brGetBranch1(br)));
-  brSetBranch2(clone,brDup(brGetBranch2(br)));
+  if (brHasBranch1(br))
+    brSetBranch1(clone,brDup(brGetBranch1(br)));
+  if (brHasBranch2(br))
+    brSetBranch2(clone,brDup(brGetBranch2(br)));
   return clone;
 }
