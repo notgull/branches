@@ -19,6 +19,10 @@
 #ifndef SHORTCUTS_H
 #define SHORTCUTS_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void newline();
 
 void shell_tx();
@@ -27,6 +31,10 @@ int yesno(char *question);
 
 void getInput(char *inputGet, char *output);
 
-//#define DEBUG
+int check_file(char *filename);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

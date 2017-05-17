@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  err.h
+ *       Filename:  brstring.hpp
  *
- *    Description:  For throwing errors
+ *    Description:  
  *
  *        Version:  1.0
- *        Created:  03/15/2017 10:00:13 AM
+ *        Created:  05/01/2017 03:51:41 PM
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,17 +16,14 @@
  * =====================================================================================
  */
 
-#ifndef ERR_H
-#define ERR_H
+#ifndef BRSTRING_H
+#define BRSTRING_H
 
-#ifdef __cplusplus
 extern "C" {
-#endif
+  #include "branch.h"
 
-void error(char *msg, int showErrno);
-
-#ifdef __cplusplus
+  branch *brFromString(char *str);
+  char *brToString(branch *br);
 }
-#endif
 
 #endif

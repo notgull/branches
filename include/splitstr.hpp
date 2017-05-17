@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  err.h
+ *       Filename:  splitstr.hpp
  *
- *    Description:  For throwing errors
+ *    Description:  
  *
  *        Version:  1.0
- *        Created:  03/15/2017 10:00:13 AM
+ *        Created:  05/02/2017 05:49:10 PM
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,17 +16,13 @@
  * =====================================================================================
  */
 
-#ifndef ERR_H
-#define ERR_H
+#ifndef SPLITSTR_H
+#define SPLITSTR_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <string>
+#include <vector>
+using namespace std;
 
-void error(char *msg, int showErrno);
-
-#ifdef __cplusplus
-}
-#endif
+vector<string> splitString(string str, char sep);
 
 #endif

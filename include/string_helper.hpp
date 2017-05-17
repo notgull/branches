@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  err.h
+ *       Filename:  str-to-ptr.hpp
  *
- *    Description:  For throwing errors
+ *    Description:  
  *
  *        Version:  1.0
- *        Created:  03/15/2017 10:00:13 AM
+ *        Created:  05/10/2017 03:22:10 PM
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,17 +16,16 @@
  * =====================================================================================
  */
 
-#ifndef ERR_H
-#define ERR_H
+#ifndef STR-TO-PTR-HPP
+#define STR-TO-PTR-HPP
 
-#ifdef __cplusplus
+#include <string>
+
+char *getPointerFrom(std::string str);
+std::string getStringFrom(char *str);
+
 extern "C" {
-#endif
-
-void error(char *msg, int showErrno);
-
-#ifdef __cplusplus
+  char *getAllLinesFromFile(char *filename);
 }
-#endif
 
 #endif

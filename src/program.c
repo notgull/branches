@@ -26,6 +26,13 @@
 
 #define INPUT_MAX_SIZE 256
 
+// defined in brstring.cpp
+char *brToString(branch *br);
+branch *brFromString(char *str);
+
+// defined in string_helper.cpp
+char *getAllLinesFromFile(char *filename);
+
 // prints version information
 void print_version(int verbose) {
   if (!verbose)
@@ -166,7 +173,7 @@ int runProgram() {
     scanf("%s",cmd); 
 
     // outdated debugging stuff
-    #if DEBUG
+    #ifdef DEBUG
     printf("You entered: %s",cmd);
     #endif
 
@@ -232,19 +239,26 @@ int runProgram() {
 	brPrint(root);
 	break;
       case 's':
-        /* if (yesno("Do you really want to save your progress?")) {
+         if (yesno("Do you really want to save your progress?")) {
           char dummy[3];
           fgets(dummy,3,stdin);
           char filename[256];
           printf("Enter filename: ");
           fgets(filename,256,stdin);
+          if (filename[strlen(filename) - 1] == '\n')
+            filename[strlen(filename) - 1] = '\0';
           printf("Saving progress to %s...\n",filename);
-          brSaveToFile(root,filename);
+          FILE *output = fopen(filename,"w");
+          fprintf(output,brToString(root));
+          fclose(output);
           puts("Sucessfully saved file!");
-        } */
-        puts("Feature currently unavailible");
+        }
+        
         break;
-      case 'a': /*  
+      case 'a':
+#ifdef DEBUG
+        puts("Entering read");
+#endif 
         printf("");
         char dummy[3];
         fgets(dummy,3,stdin);
@@ -253,10 +267,19 @@ int runProgram() {
         fgets(filename,256,stdin);
         if (filename[strlen(filename) - 1] == '\n')
           filename[strlen(filename) - 1] = '\0';
-        root = brLoadFromFile(filename);
+        if (check_file(filename)) {
+          fprintf(stderr,"Read Error\n");
+          break;
+        }
+#ifdef DEBUG
+        puts("Entering getAllLines");
+#endif
+        char *result = getAllLinesFromFile(filename);
+
+        root = brFromString(result);
         current = root;
-        brPrint(root);*/
-        puts("Feature currently unavailible");
+        brPrint(root);
+        //puts("Feature currently unavailible");
         break; 
       case '3':
         if (current == root)

@@ -8,10 +8,10 @@ set(GCC_COVERAGE_COMPILE_FLAGS "-std=c99 -Iinclude")
 add_definitions(${GCC_COVERAGE_COMPILE_FLAGS})
 
 # set version information
-set(br_VERSION "3")
-set(br_REVISION "4")
+set(br_VERSION "4")
+set(br_REVISION "0")
 set(br_MINOR_REVISION "0")
-set(br_CHANGELOG "\"-Broke the read and write functions, tbf\\n-Switched main language from C to C++\\n\"")
+set(br_CHANGELOG "\"-Finally got read and write working!\\n-Cried a lot\\n\"")
 
 # get sources
 file(GLOB SOURCES "src/*")

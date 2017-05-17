@@ -19,6 +19,10 @@
 #ifndef BRANCH_H
 #define BRANCH_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct br_struct {
   const char *b1;
   const char *b2;
@@ -66,5 +70,9 @@ void brRelease(branch *br);
 branch *brGetPrevious(branch *br);
 
 branch *brDup(branch *br);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
