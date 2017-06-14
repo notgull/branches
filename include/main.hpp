@@ -19,8 +19,6 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-extern "C" {
-  int runProgram();
-}
+#include "program.hpp"
 
 #endif

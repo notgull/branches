@@ -18,11 +18,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#include "err.hpp"
+using namespace std;
 
-void error(char *msg, int showErrno) {
+void error(string msg, int showErrno) {
   if (showErrno)
-    fprintf(stderr, "%s: %s\n", msg, strerror(errno));
+    fprintf(stderr, "%s: %s\n", msg.c_str(), strerror(errno));
   else
-    fprintf(stderr, "%s\n",msg);
+    fprintf(stderr, "%s\n",msg.c_str());
   exit(1);
 }

@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  str-to-ptr.hpp
+ *       Filename:  shortcuts.h
  *
  *    Description:  
  *
  *        Version:  1.0
- *        Created:  05/10/2017 03:22:10 PM
+ *        Created:  03/16/2017 08:49:36 AM
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,16 +16,16 @@
  * =====================================================================================
  */
 
-#ifndef STR-TO-PTR-HPP
-#define STR-TO-PTR-HPP
-
+#ifndef SHORTCUTS_H
+#define SHORTCUTS_H
 #include <string>
+using namespace std;
 
-char *getPointerFrom(std::string str);
-std::string getStringFrom(char *str);
+void newline();
 
-extern "C" {
-  char *getAllLinesFromFile(char *filename);
-}
+void shell_tx();
 
+int yesno(int nullfirst,string question);
+
+int check_file(string filename);
 #endif

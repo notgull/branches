@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  loop.c
+ *       Filename:  main.h
  *
  *    Description:  
  *
  *        Version:  1.0
- *        Created:  03/26/2017 10:41:25 AM
+ *        Created:  03/14/2017 09:40:07 AM
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,18 +16,9 @@
  * =====================================================================================
  */
 
-#include "loop.h"
+#include "branch.hpp"
 
-int _looping = 0;
-
-void beginLoop() {
-  _looping = 1;
-}
-
-int isLooping() {
-  return _looping;
-}
-
-void stopLoop() {
-  _looping = 0;
-}
+void print_version(int verbose);
+void print_cmds();
+branch *usr_input_branch();
+int runProgram();

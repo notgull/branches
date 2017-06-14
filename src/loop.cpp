@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  brstring.hpp
+ *       Filename:  loop.c
  *
  *    Description:  
  *
  *        Version:  1.0
- *        Created:  05/01/2017 03:51:41 PM
+ *        Created:  03/26/2017 10:41:25 AM
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,14 +16,18 @@
  * =====================================================================================
  */
 
-#ifndef BRSTRING_H
-#define BRSTRING_H
+#include "loop.hpp"
 
-extern "C" {
-  #include "branch.h"
+int _looping = 0;
 
-  branch *brFromString(char *str);
-  char *brToString(branch *br);
+void beginLoop() {
+  _looping = 1;
 }
 
-#endif
+int isLooping() {
+  return _looping;
+}
+
+void stopLoop() {
+  _looping = 0;
+}

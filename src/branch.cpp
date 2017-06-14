@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  brstring.cpp
+ *       Filename:  branch.c
  *
  *    Description:  
  *
  *        Version:  1.0
- *        Created:  05/02/2017 04:30:56 PM
+ *        Created:  03/14/2017 09:28:20 AM
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,23 +16,96 @@
  * =====================================================================================
  */
 
-#include "brstring.hpp"
+#include "branch.hpp"
+#include "err.hpp"
+#include "shortcuts.hpp"
 #include "splitstr.hpp"
-#include "string_helper.hpp"
-#include "err.h"
-
-#include <string>
 #include <iostream>
 #include <vector>
-
+#include <sstream>
 using namespace std;
+
+branch::branch(string b1, string b2, string txt) {
+  this->b1 = b1;
+  this->b2 = b2;
+  this->txt = txt;
+
+  this->branch1 = NULL;
+  this->branch2 = NULL;
+}
+
+bool branch::hasBranch1() {
+  if (this->branch1)
+    return true;
+  return false;
+}
+
+bool branch::hasBranch2() {
+  if (this->branch2)
+    return true;
+  return false;
+}
+
+string branch::getMainText() {
+  return this->txt; 
+}
+
+string branch::getText1() {
+  return this->b1;
+}
+
+string branch::getText2() {
+  return this->b2;
+}
+
+branch *branch::getBranch1() {
+  return this->branch1;
+}
+
+branch *branch::getBranch2() {
+  return this->branch2;
+}
+
+void branch::setBranch1(branch *br) {
+  this->branch1 = br;
+}
+
+void branch::setBranch2(branch *br) {
+  this->branch2 = br;
+}
+
+string branch::printWorthy() {
+  stringstream temp (stringstream::in | stringstream::out);
+  temp << this->txt << endl;
+  temp << "Option 1: " << this->b1 << endl;
+  temp << "Option 2: " << this->b2 << endl;
+  return temp.str();
+}
+
+void brPrint(branch br) {
+  cout << br.printWorthy();
+}
+
+branch branch::clone() {
+  branch br = branch(getText1(),getText2(),getMainText()); 
+    if (this->hasBranch1()) br.branch1 = this->branch1;
+    if (this->hasBranch2()) br.branch2 = this->branch2;
+  return br;
+}
+
+branch branch::trim() {
+  branch br = this->clone();
+  br.branch1 = NULL;
+  br.branch2 = NULL;
+  return br;
+}
 
 #define BR_DEAD_END "BR_DEAD_END"
 
-int brIsDeadEnd(branch *br) {
-  string txt = getStringFrom(brGetText(br));
-  string b1 = getStringFrom(brGetBranch1Text(br));
-  string b2 = getStringFrom(brGetBranch2Text(br));
+int brIsDeadEnd(branch br) {
+  string txt = br.getMainText();
+  string b1 = br.getText1();
+  string b2 = br.getText2();
 
   return ((txt == BR_DEAD_END) && (b1 == BR_DEAD_END) && (b2 == BR_DEAD_END)) ? 1 : 0;
 }
@@ -49,7 +122,7 @@ int getLineIndent(string line) {
   return indent;
 }
 
-branch *rawFromString(string input, int indent) {
+branch rawFromString(string input, int indent) {
   string str;
   if (indent == 0)
     str = input;
@@ -65,32 +138,17 @@ branch *rawFromString(string input, int indent) {
   string b1 = parts[1];
   string b2 = parts[2];
  
-  return brCreate(getPointerFrom(b1),getPointerFrom(b2),getPointerFrom(txt));
+  branch br(b1,b2,txt);
+  return br; 
 }
 
 branch *constructTree(vector<branch *> br_v, vector<int> indent_v, int indent) {
-#ifdef DEBUG
-  cout << "-- Entering constructTree --" << endl;
-  cout << "The branches used are:" << endl;
-  for (branch *br : br_v)
-    brPrint(br);
-  cout << "The indents used are: ";
-  for (int i : indent_v)
-    cout << i;
-  cout << endl;
-  cout << "The indent var is " << indent << endl << "---------------------" << endl;
-#endif
   int targetIndent = indent + 1;
   branch *target = br_v[0];
-#ifdef DEBUG
-  cout << "TargetIndent is " << targetIndent << " and target has been determined as:" << endl;
-  brPrint(target);
-#endif
+
 
   if (br_v.size() == 1) {
-#ifdef DEBUG
-    cout << "br_v size is 1, returning..." << endl;
-#endif
+
     return target;
   }
 
@@ -126,43 +184,20 @@ branch *constructTree(vector<branch *> br_v, vector<int> indent_v, int indent) {
   vector<branch *>::const_iterator first = br_v.begin() + br1_index;
   vector<branch *>::const_iterator last = br_v.begin() + br2_index;
   vector<branch *> sec1(first,last);
-
-#ifdef DEBUG
-  cout << "Section 1 determined as:" << endl;
-  for (branch *br : sec1)
-    brPrint(br);
-#endif
   
   vector<branch *> sec2;
     first = br_v.begin() + br2_index;
     last = br_v.begin() + br_v.size();
     sec2 = vector<branch *>(first,last);
-#ifdef DEBUG
-    cout << "Section 2 determined as:" << endl;
-    for (branch *br : sec2)
-      brPrint(br);
-#endif
 
   vector<int>::const_iterator i_first = indent_v.begin() + br1_index;
   vector<int>::const_iterator i_last = indent_v.begin() + br2_index;
   vector<int> i_sec1(i_first,i_last);
-#ifdef DEBUG
-  cout << "Indent Section 1 determined as: ";
-  for (int i : i_sec1)
-    cout << i << " ";
-  cout << endl;
-#endif
 
   vector<int> i_sec2(0);
     i_first = indent_v.begin() + br2_index;
     i_last = indent_v.begin() + br_v.size();
     i_sec2 = vector<int>(i_first,i_last);
-#ifdef DEBUG
-    cout << "Indent Section 2 determined as: ";
-    for (int i : i_sec2)
-      cout << i;
-    cout << endl;
-#endif
 
 #ifdef DEBUG
 
@@ -172,8 +207,8 @@ branch *constructTree(vector<branch *> br_v, vector<int> indent_v, int indent) {
   br1 = constructTree(sec1,i_sec1,targetIndent);
   br2 = constructTree(sec2,i_sec2,targetIndent);
   
-  int br1_isDeadEnd = brIsDeadEnd(sec1[0]);
-  int br2_isDeadEnd = brIsDeadEnd(sec2[0]);
+  int br1_isDeadEnd = brIsDeadEnd(*(sec1[0]));
+  int br2_isDeadEnd = brIsDeadEnd(*(sec2[0]));
 
 #ifdef DEBUG
   cout << "br1_isDeadEnd is " << br1_isDeadEnd << " and br2_isDeadEnd is " << br2_isDeadEnd << endl;
@@ -182,68 +217,72 @@ branch *constructTree(vector<branch *> br_v, vector<int> indent_v, int indent) {
 #ifdef DEBUG
   cout << "Setting branches..." << endl;
 #endif
-  if (br1_isDeadEnd == 0) brSetBranch1(target,br1);
-  if (br1_isDeadEnd == 0) brSetBranch2(target,br2);
+  if (br1_isDeadEnd == 0) target->setBranch1(br1);
+  if (br2_isDeadEnd == 0) target->setBranch2(br2);
 
 #ifdef DEBUG
   cout << "constructTree at indent " << indent << " finished successfully" << endl;
 #endif
 
-  return brDup(target);
+  return target;
 }
 
-branch *brFromString(char *input) {
-  if (input == 0 || input == NULL)
-    error("String cannot be null",0);
-
-  string str(input);
-
+branch brFromString(string str) {
  vector<string> newlines = splitString(str,'\n');
  vector<branch *> branches(0);
   vector<int> indents(0);
   
   for (string line : newlines) {
      int indent = getLineIndent(line);
-     branches.push_back(rawFromString(line,indent));
+     branch br = (rawFromString(line,indent)); 
+     branches.push_back(&br);
      indents.push_back(indent);
   }
 
   branch *root = constructTree(branches,indents,0);
 
-  return root;
+  return *(root);
 }
 
-char *brToStringInternal(branch *br, int indent) {
+branch::branch(string input) {
+  branch temp = brFromString(input);
+  this->b1 = temp.b1;
+  this->b2 = temp.b2;
+  this->txt = temp.txt;
+  this->branch1 = temp.branch1;
+  this->branch2 = temp.branch2;
+}
+
+string brToStringInternal(branch *br, int indent) {
   string str;
   for (int i = 0; i < indent; i++)
     str += " ";
 
-  str += brGetText(br);
+  str += br->getMainText();
   str += "/";
-  str += brGetBranch1Text(br);
+  str += br->getText1();
   str += "/";
-  str += brGetBranch2Text(br);
+  str += br->getText2();
   str += "\n";
 
-  if (brHasBranch1(br) == 0 && brHasBranch2(br) == 0)
-    return getPointerFrom(str);
+  if (br->hasBranch1() == 0 && br->hasBranch2() == 0)
+    return str;
 
-  branch *dead_end = brCreate(BR_DEAD_END,BR_DEAD_END,BR_DEAD_END);
+  branch dead_end (BR_DEAD_END,BR_DEAD_END,BR_DEAD_END);
 
-  if (brHasBranch1(br) != 0)
-    str += brToStringInternal(brGetBranch1(br),indent + 1);
-  else if (brHasBranch2(br) != 0)
-    str += brToStringInternal(dead_end,indent + 1);
+  if (br->hasBranch1())
+    str += brToStringInternal(br->getBranch1(),indent + 1);
+  else if (br->hasBranch2())
+    str += brToStringInternal(&(dead_end),indent + 1);
 
-  if (brHasBranch2(br) != 0)
-    str += brToStringInternal(brGetBranch2(br),indent + 1);
-  else if (brHasBranch1(br) != 0)
-    str += brToStringInternal(dead_end,indent + 1);
+  if (br->hasBranch2())
+    str += brToStringInternal(br->getBranch2(),indent + 1);
+  else if (br->hasBranch1())
+    str += brToStringInternal(&(dead_end),indent + 1);
   
-  return getPointerFrom(str);
+  return str;
 }
 
-char *brToString(branch *br) {
-  brToStringInternal(br,0);
+string branch::toString() {
+  return brToStringInternal(this,0);
 }
-

@@ -18,15 +18,7 @@
 
 #ifndef ERR_H
 #define ERR_H
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void error(char *msg, int showErrno);
-
-#ifdef __cplusplus
-}
-#endif
-
+#include <string>
+using namespace std;
+void error(string,int);
 #endif
