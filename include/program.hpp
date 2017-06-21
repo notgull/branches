@@ -16,9 +16,14 @@
  * =====================================================================================
  */
 
+#ifndef PROGRAM_HPP
+#define PROGRAM_HPP
+
 #include "branch.hpp"
 
 void print_version(int verbose);
 void print_cmds();
 branch *usr_input_branch();
 int runProgram();
+
+#endif

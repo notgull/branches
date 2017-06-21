@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  main.hpp
+ *       Filename:  server.hpp
  *
  *    Description:  
  *
  *        Version:  1.0
- *        Created:  05/01/2017 03:17:00 PM
+ *        Created:  06/15/2017 10:08:57 AM
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,10 +16,9 @@
  * =====================================================================================
  */
 
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef SERVER_H
+#define SERVER_H
 
-#include "program.hpp"
-#include "server.hpp"
+int runServer();
 
 #endif

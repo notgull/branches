@@ -122,7 +122,7 @@ int getLineIndent(string line) {
   return indent;
 }
 
-branch rawFromString(string input, int indent) {
+branch *rawFromString(string input, int indent) {
   string str;
   if (indent == 0)
     str = input;
@@ -138,7 +138,7 @@ branch rawFromString(string input, int indent) {
   string b1 = parts[1];
   string b2 = parts[2];
  
-  branch br(b1,b2,txt);
+  branch *br = new branch(b1,b2,txt);
   return br; 
 }
 
@@ -227,30 +227,20 @@ branch *constructTree(vector<branch *> br_v, vector<int> indent_v, int indent) {
   return target;
 }
 
-branch brFromString(string str) {
+branch *brFromString(string str) {
  vector<string> newlines = splitString(str,'\n');
  vector<branch *> branches(0);
   vector<int> indents(0);
   
   for (string line : newlines) {
      int indent = getLineIndent(line);
-     branch br = (rawFromString(line,indent)); 
-     branches.push_back(&br);
+     branches.push_back(rawFromString(line,indent));
      indents.push_back(indent);
   }
 
   branch *root = constructTree(branches,indents,0);
 
-  return *(root);
-}
-
-branch::branch(string input) {
-  branch temp = brFromString(input);
-  this->b1 = temp.b1;
-  this->b2 = temp.b2;
-  this->txt = temp.txt;
-  this->branch1 = temp.branch1;
-  this->branch2 = temp.branch2;
+  return root;
 }
 
 string brToStringInternal(branch *br, int indent) {
@@ -285,4 +275,27 @@ string brToStringInternal(branch *br, int indent) {
 
 string branch::toString() {
   return brToStringInternal(this,0);
+}
+
+int branch::countElements() {
+  int i = 1;
+  if (this->hasBranch1())
+    i += this->getBranch1()->countElements();
+  if (this->hasBranch2())
+    i += this->getBranch2()->countElements();
+  return i;
+}
+
+vector<branch *> branch::compileToList() {
+  vector<branch *> list(0);
+  list.push_back(this);
+  if (this->hasBranch1()) {
+    vector<branch *> b1list = this->getBranch1()->compileToList();
+    list.insert(list.end(),b1list.begin(),b1list.end());
+  }
+  if (this->hasBranch2()) {
+    vector<branch *> b2list = this->getBranch2()->compileToList();
+    list.insert(list.end(),b2list.begin(),b2list.end());
+  }
+  return list;
 }

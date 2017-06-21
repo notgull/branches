@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  main.hpp
+ *       Filename:  inet.h
  *
  *    Description:  
  *
  *        Version:  1.0
- *        Created:  05/01/2017 03:17:00 PM
+ *        Created:  06/15/2017 02:48:21 PM
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,10 +16,23 @@
  * =====================================================================================
  */
 
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef INET_H
+#define INET_H
 
-#include "program.hpp"
-#include "server.hpp"
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include <string.h>
+
+int say_c(int socket, const char *msg);
+void bindToPort(int socket, int port);
+int openSocket_c(const char *host, const char *port);
+int openListenerSocket();
+int readIn_c(int socket, char *buffer, int length);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

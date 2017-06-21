@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  main.hpp
+ *       Filename:  inet_cxx.h
  *
  *    Description:  
  *
  *        Version:  1.0
- *        Created:  05/01/2017 03:17:00 PM
+ *        Created:  06/15/2017 03:11:31 PM
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,10 +16,15 @@
  * =====================================================================================
  */
 
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef INET_CXX_HPP
+#define INET_CXX_HPP
 
-#include "program.hpp"
-#include "server.hpp"
+#include "inet.h"
+#include <string>
+using namespace std;
+
+int say(int socket, string msg);
+int openSocket(string host, string port);
+string readIn(int socket);
 
 #endif

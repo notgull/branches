@@ -17,7 +17,14 @@
  */
 
 #include "main.hpp"
+#include "program.hpp"
+#include "server.hpp"
+#include "branches_config.hpp"
 
 int main() {
+#if br_SERVER == 0
   return runProgram();
+#else
+  return runServer();
+#endif
 }

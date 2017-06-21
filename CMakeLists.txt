@@ -3,15 +3,40 @@ cmake_minimum_required(VERSION 2.8.9)
 project(branches)
 set(CMAKE_BUILD_TYPE Release)
 
+set(CWS_DEFAULT OFF)
+
+if (MINGW)
+  set (CMS_DEFAULT ON)
+endif (MINGW)
+
+option(COMPILE_WITH_STATIC "Compile with the -static option" ${CMS_DEFAULT})
+option(COMPILE_SERVER "Compile the server edition of branches" OFF)
+
+set(COMPILE_FLAGS "-Iinclude")
+set(LINK_FLAGS " ")
+
+if (COMPILE_WITH_STATIC)
+  set(COMPILE_FLAGS "${COMPILE_FLAGS} -static")
+  message(STATUS "Compiling with static libs...")
+endif (COMPILE_WITH_STATIC)
+
 # set compiler flags
-set(GCC_COVERAGE_COMPILE_FLAGS "-Iinclude")
-add_definitions(${GCC_COVERAGE_COMPILE_FLAGS})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMPILE_FLAGS}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COMPILE_FLAGS}")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${LINK_FLAGS}")
 
 # set version information
 set(br_VERSION "\"BETA\"")
 set(br_REVISION "1")
-set(br_MINOR_REVISION "0")
-set(br_CHANGELOG "\"-Converted the entire codebase to C++\\n-Overhauled the entire program structure\\n-Probably added a ton of bugs\\n-Read function is broken again\\n\"")
+set(br_MINOR_REVISION "2")
+set(br_CHANGELOG "\"-Built first trial of the server edition\\n\"")
+
+# set server information
+if (COMPILE_SERVER)
+  set(br_SERVER "1")
+else (COMPILE_SERVER)
+  set(br_SERVER "0")
+endif (COMPILE_SERVER)
 
 # get sources
 file(GLOB SOURCES "src/*")

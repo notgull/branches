@@ -38,7 +38,7 @@ void shell_tx() {
 int yesno(int nullfirst, string question) {
   int first = nullfirst;
   string response;
-  cout << question << " [Y/n]";
+  cout << question << " [Y/n] ";
   getline(cin,response);
   do {
     if (tolower(response[0]) == 'y')

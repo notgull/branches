@@ -1,4 +1,10 @@
+#ifndef BRANCHES_CONFIGURATION_HPP_IN
+#define BRANCHES_CONFIGURATION_HPP_IN
+
 #define br_VERSION @br_VERSION@
 #define br_REVISION @br_REVISION@
 #define br_MINOR_REVISION @br_MINOR_REVISION@
 #define br_CHANGELOG @br_CHANGELOG@
+#define br_SERVER @br_SERVER@
+
+#endif

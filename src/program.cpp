@@ -19,15 +19,20 @@
 #include "err.hpp"
 #include "shortcuts.hpp"
 #include "program.hpp"
+#include "inet_cxx.hpp"
+#include "splitstr.hpp"
 #include "branches_config.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
 
 #include <iostream>
+#include <vector>
 #include <string>
 #include <sstream>
 #include <fstream>
+#include <chrono>
+#include <thread>
 using namespace std;
 
 #define INPUT_MAX_SIZE 256
@@ -113,6 +118,16 @@ branch *usr_input_branch() {
   return new branch("","","");
 }
 
+// net variables and functions
+int connection = -1;
+int alreadyHaveIPandPort = 0;
+string ipAddr;
+string portAddr;
+string defaultServerIP = "0.0.0.0";
+string defaultServerPort = "32001";
+
+string id;
+
 // program entry point
 int runProgram() {
   // introduce the help menu and version info
@@ -136,9 +151,37 @@ int runProgram() {
       case '1':
 	thing = 0;
 	break;
-      case '2':
       case '3':
-        cout << "Internet connection not implemented as of this version." << endl;
+        thing = 0;
+        cout << "Enter IP Address: ";
+        getline(cin,ipAddr);
+        if (ipAddr.find(":") !=  string::npos) {
+          vector<string> parts = splitString(ipAddr,':');
+          ipAddr = parts[0];
+          portAddr = parts[1]; 
+        }
+        else {
+          cout << "Enter port: ";
+          getline(cin,portAddr);
+        }
+        alreadyHaveIPandPort = 1;
+      case '2': {
+        thing = 0;
+        if (!(alreadyHaveIPandPort)) {
+          ipAddr = defaultServerIP;
+          portAddr = defaultServerPort;
+        }
+        cout << "Connecting to " << ipAddr << ":" << portAddr << "..." << endl;
+        thing = 0;
+        connection = openSocket(ipAddr,portAddr);
+        string motd = readIn(connection);
+        cout << motd;
+        /*cout << "Saying: ID_REQ" << endl;
+        say(connection,"ID_REQ");
+        id = readIn(connection);
+        cout << "Got ID: " << id << endl;*/
+        break;
+      }
       default:
         cout << "Invalid command" << endl;
         shell_tx();
@@ -149,36 +192,62 @@ int runProgram() {
   newline();
   print_cmds();
   newline();
-
-  // initial branch
-  branch *root = new branch("Take the left path", "Take the right path", "You come across a fork in the road.");
-  brPrint(*root);
-//  initializeTree(&root);
-  branch *br1;
-  branch *br2;
+  
+  branch *root;
+  if (connection == -1) {
+    if (check_file("default.br")) {
+      // initial branch
+      root = new branch("Take the left path", "Take the right path", "You come across a fork in the road.");
+      branch *br1;
+      branch *br2;
  
+      // other two branches
+      br1 = new branch("Knock on the door","Peer through the window","You come across a house on the prarie.");
+      br2 = new branch("Cross the bridge","Jump into the water","You come across a bridge crossing a river.");
+      root->setBranch1(br1);
+      root->setBranch2(br2);
+    }
+    else {
+      string line;
+      stringstream temp (stringstream::in | stringstream::out);
+      ifstream myfile ("default.br");
+      if (myfile.is_open())
+      {
+        while ( getline (myfile,line) )
+        {
+          temp << line << '\n';
+        }
+        myfile.close();
+      }
+      root = brFromString(temp.str());
+    }
+  }
+  else {
+    say(connection,"ROOT_REQ\n");
+    string rootString = readIn(connection);
+    if (rootString.length() != 0 && rootString[rootString.length() - 1] == '\n')
+      rootString = rootString.substr(0,rootString.length() - 1);
+    //cout << "Received: " << rootString << endl;
+    root = brFromString(rootString);
+  }
+  brPrint(*root);
+  
   branch *third_tree = new branch("Drop kick it","Stab someone","You pick up the fork");
-
-  // other two branches
-  br1 = new branch("Knock on the door","Peer through the window","You come across a house on the prarie.");
-  br2 = new branch("Cross the bridge","Jump into the water","You come across a bridge crossing a river.");
-  root->setBranch1(br1);
-  root->setBranch2(br2);
  
   // current branch
   branch *current = root;
   
   // don't use loop.h for this; loop.h is needed for inner loops
-  // also, this is the main loop
+  // this is the main loop
   int cont = 1;
   
-  do {
+  while (cont) {
     // this makes the > thing
     shell_tx();
     // get the command
     scanf("%s",cmd); 
 
-    // wat do?
+    // main switch statement
     switch (cmd[0]) {
       case 'e':
         // user wants to exit the game
@@ -194,32 +263,111 @@ int runProgram() {
         print_cmds();
 	break;
       case '2':
-        if (current->hasBranch2())
+        if (current->hasBranch2()) {
           current = current->getBranch2();
+          if (connection != -1) {
+#ifdef DEBUG
+            cout << "Sending NAV_REQ:2 to the server" << endl;
+#endif
+            say(connection,"NAV_REQ:2\n");
+            string input = readIn(connection);
+#ifdef DEBUG
+            cout << "Received result " << input << endl;
+#endif
+          }
+        }
 	else {
+          if (connection != -1) {
+#ifdef DEBUG
+            cout << "Sending SEND_REQ:2 to the server" << endl;
+#endif
+            say(connection,"SEND_REQ:2\n");
+            string newBranch = readIn(connection);
+            if (newBranch.length() != 0 && newBranch[0] == '0') {
+              if (newBranch[newBranch.length() - 1] == '\n')
+                newBranch = newBranch.substr(0,newBranch.length() - 1);
+              string actualBranch = (splitString(newBranch,':'))[1];
+#ifdef DEBUG
+              cout << "Received: " << actualBranch << endl;
+#endif 
+              branch *newBranchPtr = brFromString(actualBranch);
+
+              current->setBranch2(newBranchPtr);
+              current = current->getBranch2();
+              brPrint(*current);
+              break;
+            } 
+          }
 	  if (yesno(0,"You have reached the end. Would you like to create a new node?")) {
-	      branch *br = usr_input_branch();
-	      current->setBranch2(br);
-	      current = br;
+	    branch *br = usr_input_branch();
+	    current->setBranch2(br);
+	    current = br;
+            if (connection != -1) {
+#ifdef DEBUG
+              cout << "Sending UPLOAD_REQ:2:" << current->toString() << endl;
+#endif
+              say(connection,"UPLOAD_REQ:2:" + current->toString() + '\n');
+            }
 	  }
 	  else
-	      current = root;
+	    current = root;
 	}
 	brPrint(*current);
 	break;
       case '1':
-        if (current->hasBranch1())
+        if (current->hasBranch1()) {
           current = current->getBranch1();
+          if (connection != -1) {
+#ifdef DEBUG
+            cout << "Sending NAV_REQ:1 to the server" << endl;
+#endif
+            say(connection,"NAV_REQ:1\n");
+            string input = readIn(connection);
+#ifdef DEBUG
+            cout << "Received result " << input << endl;
+#endif
+          }
+        }
 	else {
-	  if (yesno(0,"You have reached the end. Would you like to create a new node?")) {
-	      branch *br = usr_input_branch();
-	      current->setBranch1(br);
-	      current = br;
-	  }
-	  else
-	      current = root;
+          if (connection != -1) {
+#ifdef DEBUG
+            cout << "Sending SEND_REQ:1 to the server" << endl;
+#endif
+             say(connection,"SEND_REQ:1\n");
+            string newBranch = readIn(connection);
+            if (newBranch.length() != 0 && newBranch[0] == '0') {
+              if (newBranch[newBranch.length() - 1] == '\n')
+                newBranch = newBranch.substr(0,newBranch.length() - 1);
+              string actualBranch = (splitString(newBranch,':'))[1];
+#ifdef DEBUG
+              cout << "Received: " << actualBranch << endl;
+#endif
+              branch *newBranchPtr = brFromString(actualBranch);
+
+              current->setBranch1(newBranchPtr);
+              current = current->getBranch1();
+              brPrint(*current);
+              break;
+           } 
+         }
+	 if (yesno(0,"You have reached the end. Would you like to create a new node?")) {
+           branch *br = usr_input_branch();
+           current->setBranch1(br);
+           current = br;
+           if (connection != -1) {
+#ifdef DEBUG
+            cout << "Sending UPLOAD_REQ:1:" << current->toString() << " to the server" << endl;
+#endif
+            say(connection,"UPLOAD_REQ:1:" + current->toString() + '\n');
+           }
+         }
+	 else
+           current = root;
+          
 	  
 	}
+        brPrint(*current);
+        break;
       case 'p':
         brPrint(*current);
 	break;
@@ -232,12 +380,16 @@ int runProgram() {
       	break;
       case 'r':
         current = root;
+        if (connection != -1) {
+#ifdef DEBUG
+          cout << "Sending RETURN_REQ to the server" << endl;
+#endif
+          say(connection,"RETURN_REQ\n");
+        }
 	brPrint(*root);
 	break;
       case 's': { 
-         if (yesno(1,"Do you really want to save your progress?")) {
-          char dummy[3];
-          fgets(dummy,3,stdin);
+         if (yesno(0,"Do you really want to save your progress?")) {
           string filename;
           cout << "Enter filename: ";
           getline(cin,filename);
@@ -278,7 +430,8 @@ int runProgram() {
         }
 
         string result = temp.str();
-        root = new branch(result);
+        delete root;
+        root = brFromString(result);
         current = root;
         brPrint(*root);
         //cout << "Feature currently unavailible");
@@ -296,8 +449,8 @@ int runProgram() {
       default: {
         cout << "Invalid command, please reenter" << endl;
 	break; }
-    }
-  } while (cont);
+    
+  } }
   delete root;
   return 0;
 }

@@ -20,6 +20,7 @@
 #define BRANCH_H
 
 #include <string>
+#include <vector>
 using namespace std;
 
 class branch {
@@ -31,7 +32,6 @@ class branch {
     branch *branch2;
   public:
     branch(string,string,string);
-    branch(string);
     bool hasBranch1();
     bool hasBranch2();
     string getMainText();
@@ -40,15 +40,18 @@ class branch {
    
     branch *getBranch1();
     branch *getBranch2();
+    int countElements();
   
     void setBranch1(branch *);
     void setBranch2(branch *);
   
     string toString();
     string printWorthy();
+    vector<branch *> compileToList();
     branch clone();
     branch trim();
 };
 
 void brPrint(branch);
+branch *brFromString(string);
 #endif
