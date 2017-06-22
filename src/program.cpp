@@ -14,6 +14,22 @@
  *   Organization:  JaydomStudios
  *
  * =====================================================================================
+ 
+This file is part of Branches.
+
+Branches is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Branches is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Branches.  If not, see <http://www.gnu.org/licenses/>.
+
  */
 
 #include "err.hpp"
@@ -45,6 +61,24 @@ void print_version(int verbose) {
     cout << "You are using: Branches Version " <<  br_VERSION << " Revision " << br_REVISION << " Minor Revision " << br_MINOR_REVISION << endl;
 }
 
+void print_license() {
+  cout << "Branches, an expandable choose-your-own-adventure game" << endl;
+  cout << "Copyright (C) 2017  John Nunley" << endl << endl;
+
+  cout << "This program is free software: you can redistribute it and/or modify" << endl;
+  cout << "it under the terms of the GNU General Public License as published by" << endl;
+  cout << "the Free Software Foundation, either version 3 of the License, or" << endl;
+  cout << "(at your option) any later version." << endl << endl;
+
+  cout << "This program is distributed in the hope that it will be useful," << endl;
+  cout << "but WITHOUT ANY WARRANTY; without even the implied warranty of" << endl;
+  cout << "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the" << endl;
+  cout << "GNU General Public License for more details." << endl << endl;
+
+  cout << "You should have received a copy of the GNU General Public License" << endl;
+  cout << "along with this program.  If not, see <http://www.gnu.org/licenses/>." << endl;
+}
+
 // prints help menu
 void print_cmds() {
   cout << "List of commands:" << endl;
@@ -57,6 +91,7 @@ void print_cmds() {
   cout << "v - prints version information" << endl;
   cout << "c - prints change log" << endl;
   cout << "h - list this help menu again" << endl;
+  cout << "w - view warranty information" << endl;
   cout << "e - exit the game" << endl;
   cout << "Enter the letter and press the Enter key to use the command" << endl;
 }
@@ -132,6 +167,8 @@ string id;
 int runProgram() {
   // introduce the help menu and version info
   print_version(0);
+  newline();
+  print_license();
   newline();
 
   cout << "Select mode:" << endl;
@@ -236,6 +273,7 @@ int runProgram() {
  
   // current branch
   branch *current = root;
+  branch *previous = NULL;
   
   // don't use loop.h for this; loop.h is needed for inner loops
   // this is the main loop
@@ -253,6 +291,8 @@ int runProgram() {
         // user wants to exit the game
         printf("Exiting Branches...\n");
 	cont = 0;
+        if (connection != -1)
+          say(connection,"STOP_REQ\n");
 	break;
       case 'v':
         // print verbose game information
@@ -264,6 +304,7 @@ int runProgram() {
 	break;
       case '2':
         if (current->hasBranch2()) {
+          previous = current;
           current = current->getBranch2();
           if (connection != -1) {
 #ifdef DEBUG
@@ -300,6 +341,7 @@ int runProgram() {
           }
 	  if (yesno(0,"You have reached the end. Would you like to create a new node?")) {
 	    branch *br = usr_input_branch();
+            previous = current;
 	    current->setBranch2(br);
 	    current = br;
             if (connection != -1) {
@@ -316,6 +358,7 @@ int runProgram() {
 	break;
       case '1':
         if (current->hasBranch1()) {
+          previous = current;
           current = current->getBranch1();
           if (connection != -1) {
 #ifdef DEBUG
@@ -352,6 +395,7 @@ int runProgram() {
          }
 	 if (yesno(0,"You have reached the end. Would you like to create a new node?")) {
            branch *br = usr_input_branch();
+           previous = current;
            current->setBranch1(br);
            current = br;
            if (connection != -1) {
@@ -376,10 +420,16 @@ int runProgram() {
         cout << br_CHANGELOG;
         break;
       case 'o':
-        cout << "Feature unavailible" << endl; 
+        if (previous == NULL)
+          cout << "Unable to return to previous node" << endl;
+        else {
+          current = previous;
+          previous = NULL;
+        }
       	break;
       case 'r':
         current = root;
+        previous = NULL;
         if (connection != -1) {
 #ifdef DEBUG
           cout << "Sending RETURN_REQ to the server" << endl;
@@ -433,6 +483,7 @@ int runProgram() {
         delete root;
         root = brFromString(result);
         current = root;
+        previous = NULL;
         brPrint(*root);
         //cout << "Feature currently unavailible");
         break; }

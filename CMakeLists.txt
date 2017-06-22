@@ -1,3 +1,18 @@
+# This file is part of Branches.
+# 
+# Branches is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# Branches is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with Branches.  If not, see <http://www.gnu.org/licenses/>.
+
 # required stuff
 cmake_minimum_required(VERSION 2.8.9)
 project(branches)
@@ -6,13 +21,13 @@ set(CMAKE_BUILD_TYPE Release)
 set(CWS_DEFAULT OFF)
 
 if (MINGW)
-  set (CMS_DEFAULT ON)
+  set (CWS_DEFAULT ON)
 endif (MINGW)
 
-option(COMPILE_WITH_STATIC "Compile with the -static option" ${CMS_DEFAULT})
+option(COMPILE_WITH_STATIC "Compile with the -static option" ${CWS_DEFAULT})
 option(COMPILE_SERVER "Compile the server edition of branches" OFF)
 
-set(COMPILE_FLAGS "-Iinclude")
+set(COMPILE_FLAGS "-Iinclude -pthread")
 set(LINK_FLAGS " ")
 
 if (COMPILE_WITH_STATIC)
@@ -27,9 +42,9 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${LINK_FLAGS}")
 
 # set version information
 set(br_VERSION "\"BETA\"")
-set(br_REVISION "1")
-set(br_MINOR_REVISION "2")
-set(br_CHANGELOG "\"-Built first trial of the server edition\\n\"")
+set(br_REVISION "2")
+set(br_MINOR_REVISION "0")
+set(br_CHANGELOG "\"-Slapped the GPL on the entire game\\n-Temporary fix for o option\\n-Fixed server issue allowing only one client at once\\n-Fixed a couple concurrency issues\\n-Fixed a non-lethal CMAKE typo\\n\"")
 
 # set server information
 if (COMPILE_SERVER)
