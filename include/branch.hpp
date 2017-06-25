@@ -46,6 +46,7 @@ class branch {
     string b2;
     branch *branch1;
     branch *branch2;
+    branch *prev;
   public:
     branch(string,string,string);
     bool hasBranch1();
@@ -56,10 +57,12 @@ class branch {
    
     branch *getBranch1();
     branch *getBranch2();
+    branch *getPrevious();
     int countElements();
   
     void setBranch1(branch *);
     void setBranch2(branch *);
+    void nullifyPrevious();
   
     string toString();
     string printWorthy();
@@ -70,4 +73,5 @@ class branch {
 
 void brPrint(branch);
 branch *brFromString(string);
+void brDeleteBranch(branch *);
 #endif

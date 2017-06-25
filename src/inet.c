@@ -32,6 +32,10 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 
  */
 
+#include "iswin.hpp"
+
+#ifndef USING_WIN
+
 #include "inet.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -109,3 +113,5 @@ int readIn_c(int socket, char *buffer, int length) {
     s[c-1] = '\0';
   return length - slen;
 }
+
+#endif

@@ -38,6 +38,7 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 #include "inet_cxx.hpp"
 #include "splitstr.hpp"
 #include "branches_config.hpp"
+#include "iswin.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -154,7 +155,11 @@ branch *usr_input_branch() {
 }
 
 // net variables and functions
+#ifdef USING_WIN
+SOCKET connection = INVALID_SOCKET;
+#else
 int connection = -1;
+#endif
 int alreadyHaveIPandPort = 0;
 string ipAddr;
 string portAddr;
@@ -162,6 +167,8 @@ string defaultServerIP = "0.0.0.0";
 string defaultServerPort = "32001";
 
 string id;
+
+string dummy_geturl;
 
 // program entry point
 int runProgram() {
@@ -190,6 +197,7 @@ int runProgram() {
 	break;
       case '3':
         thing = 0;
+        getline(cin,dummy_geturl);
         cout << "Enter IP Address: ";
         getline(cin,ipAddr);
         if (ipAddr.find(":") !=  string::npos) {
@@ -209,7 +217,7 @@ int runProgram() {
           portAddr = defaultServerPort;
         }
         cout << "Connecting to " << ipAddr << ":" << portAddr << "..." << endl;
-        thing = 0;
+        thing = 0;  
         connection = openSocket(ipAddr,portAddr);
         string motd = readIn(connection);
         cout << motd;
@@ -420,11 +428,16 @@ int runProgram() {
         cout << br_CHANGELOG;
         break;
       case 'o':
-        if (previous == NULL)
+        if (connection != -1)
+        {
+          cout << "Unable to return to previous node while network connection is active" << endl;
+          break;
+        }
+        if (current->getPrevious() == NULL)
           cout << "Unable to return to previous node" << endl;
         else {
-          current = previous;
-          previous = NULL;
+          current = current->getPrevious();
+          brPrint(*current);
         }
       	break;
       case 'r':
@@ -455,6 +468,10 @@ int runProgram() {
         
         break; }
       case 'a': {
+        if (connection != -1)
+        {
+          cout << "You are connected to a server, and are unable to read in a saved file" << endl;
+        }
         printf("");
         string filename;
         printf("Enter filename: ");
@@ -480,7 +497,7 @@ int runProgram() {
         }
 
         string result = temp.str();
-        delete root;
+        brDeleteBranch(root);
         root = brFromString(result);
         current = root;
         previous = NULL;
@@ -502,6 +519,6 @@ int runProgram() {
 	break; }
     
   } }
-  delete root;
+  brDeleteBranch(root);
   return 0;
 }

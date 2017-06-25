@@ -35,6 +35,9 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef INET_H
 #define INET_H
 
+#include "iswin.hpp"
+#ifndef USING_WIN
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -49,6 +52,8 @@ int readIn_c(int socket, char *buffer, int length);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
 
 #endif

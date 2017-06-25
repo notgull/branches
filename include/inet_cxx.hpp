@@ -36,11 +36,27 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 #define INET_CXX_HPP
 
 #include "inet.h"
+#include "iswin.hpp"
+
+#ifdef USING_WIN
+#include "inet_windows.hpp"
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#endif
+
 #include <string>
 using namespace std;
 
-int say(int socket, string msg);
+#ifdef USING_WIN
+SOCKET openSocket(string host, string port);
+int say(SOCKET sock,string msg);
+string readIn(SOCKET sock);
+#else
 int openSocket(string host, string port);
-string readIn(int socket);
+int say(int sock, string msg);
+string readIn(int sock);
+#endif
+
+
 
 #endif

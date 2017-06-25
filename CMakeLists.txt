@@ -20,9 +20,9 @@ set(CMAKE_BUILD_TYPE Release)
 
 set(CWS_DEFAULT OFF)
 
-if (MINGW)
+if (MINGW OR MSYS)
   set (CWS_DEFAULT ON)
-endif (MINGW)
+endif (MINGW OR MSYS)
 
 option(COMPILE_WITH_STATIC "Compile with the -static option" ${CWS_DEFAULT})
 option(COMPILE_SERVER "Compile the server edition of branches" OFF)
@@ -43,8 +43,8 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${LINK_FLAGS}")
 # set version information
 set(br_VERSION "\"BETA\"")
 set(br_REVISION "2")
-set(br_MINOR_REVISION "0")
-set(br_CHANGELOG "\"-Slapped the GPL on the entire game\\n-Temporary fix for o option\\n-Fixed server issue allowing only one client at once\\n-Fixed a couple concurrency issues\\n-Fixed a non-lethal CMAKE typo\\n\"")
+set(br_MINOR_REVISION "1")
+set(br_CHANGELOG "\"-Fixed Windows compatibility issues\\nExpanded the default tree by quite a bit\\n-Kind of fixed the previous node option\\n-Added increased network security\\n\"")
 
 # set server information
 if (COMPILE_SERVER)
@@ -66,6 +66,13 @@ configure_file (
 add_executable(branches ${SOURCES})
 set_property(TARGET branches PROPERTY CXX_STANDARD 11)
 set_property(TARGET branches PROPERTY CXX_STANDARD_REQUIRED ON)
+
+# get additional libs
+if (WIN32 OR MINGW OR MSYS)
+  target_link_libraries(branches wsock32 ws2_32) 
+endif (WIN32 OR MINGW OR MSYS)
+
+
 
 # add installation rules
 install(TARGETS branches DESTINATION bin)

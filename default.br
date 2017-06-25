@@ -1,3 +1,23 @@
 You come across a fork in the road./Take the left path/Take the right path
  You come across a house on the prarie./Knock on the door/Peer through the window
+  A vile orc bursts through the door./Run away/Say "Good Morning!"
+   You run into a cliff... and the orc is still in persuit./Jump off the cliff/Engage in combat
+    As you fall, you see a river at the bottom of the cliff./Start diving/Attempt to fly
+    What weapon do you use?/Magic Wand/Steel Sword
+   BR_DEAD_END/BR_DEAD_END/BR_DEAD_END
+  BR_DEAD_END/BR_DEAD_END/BR_DEAD_END
  You come across a bridge crossing a river./Cross the bridge/Jump into the water
+  Suddenly, the bridge begins to shake./Run across the bridge/Jump into the water
+   You are just in time, and cross the bridge! You are now at a water well./Peer into the well/Wheel up some water
+    You see a family of octopi with guns./Throw rocks at them/Ignore them and move on
+    A massive octopus with a knife is wheeled up./Engage in combat/Run
+   You are forced into the rushing rapids. A rock is up ahead./Avoid the rock/Grab onto the rock
+    You hear a rushing noise as the crash of a waterfall sounds from ahead./Navigate to the shore./YOLO
+    The rock is actually a giant crab!/Jump to the shore/Hold onto crab
+  You encounter a family of piranhas, and they look hungry./Swim away/Engage in combat
+   You climb onto the shore. Unfortunately, the shore is made of quicksand./Jump out of the quicksand/Let yourself sink in
+    You successfully jump out of the quicksand. You are now face-to-face with a goblin./Make friends/Machine Gun
+    You are pulled under into an ancient temple's room. You see a large gemstone lying on a pedestal./Take the gemstone/Exit the room
+   What weapon do you use?/Fists/Machine Gun
+    The piranhas all get KO'd by your skills in hand-to-hand combat. But you suddenly enter the river's rapids./Attempt to swim to the shore/Grab onto a rock
+    You throw the machine gun at one of the piranhas. They're immune to machine guns./Run/Splash them

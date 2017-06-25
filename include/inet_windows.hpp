@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  inet_cxx.cpp
+ *       Filename:  inet_windows.h
  *
  *    Description:  
  *
  *        Version:  1.0
- *        Created:  06/15/2017 03:15:47 PM
+ *        Created:  06/22/2017 04:09:55 PM
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -32,49 +32,26 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 
  */
 
-#include "inet_cxx.hpp"
-#include <string.h>
+#ifndef NET_WIN_H
+#define NET_WIN_H
+
 #include "iswin.hpp"
+
+#ifdef USING_WIN
+
+#include <winsock2.h>
+#include <ws2tcpip.h>
 using namespace std;
 
-#ifdef USING_WIN
-int say(SOCKET sock, string msg) {
-  return say_win(sock,msg.c_str());
-}
-#else
-int say(int sock, string msg) {
-  return say_c(sock,msg.c_str());
-}
+#pragma comment(lib, "Ws2_32.lib")
+
+int initialize_wininet();
+SOCKET openSocket_win(const char *host, const char *port);
+SOCKET openListenerSocket();
+void bindToPort(SOCKET listener, int port);
+int say_win(SOCKET sock, const char *msg);
+int readIn_win(SOCKET sock, char *buffer, int length);
+
 #endif
 
-#ifdef USING_WIN
-SOCKET openSocket(string host, string port) {
-  return openSocket_win(host.c_str(),port.c_str());
-}
-#else
-int openSocket(string host, string port) {
-  return openSocket_c(host.c_str(),port.c_str());
-}
 #endif
-
-#ifndef USING_WIN
-string readIn(int sock) {
-#else
-string readIn(SOCKET sock) {
-#endif
-  string str;
-  char *writable = new char[1024];
-  std::copy(str.begin(), str.end(), writable);
-  writable[str.size()] = '\0';
-
-#ifdef USING_WIN
-  readIn_win(sock,writable,1024);
-#else
-  readIn_c(sock,writable,1024);
-#endif
-
-  string result(writable);
-  delete[] writable; 
- 
-  return result;
-}

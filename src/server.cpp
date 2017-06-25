@@ -47,8 +47,14 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 #include <thread>
 
+#include "iswin.hpp"
+#ifdef USING_WIN
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -56,7 +62,11 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 using namespace std;
 
 int port = 32001;
+#ifdef USING_WIN
+SOCKET listener;
+#else
 int listener;
+#endif
 
 string name = "BRANCHES BETA SERVER";
 int nextId = -1;
@@ -72,17 +82,11 @@ string removeReturnFrom(string line) {
   return line.substr(0,line.length() - offset);
 }
 
-void debugging_printBranchVector(vector<branch *> list) {
-#ifdef DEBUG
-  cout << "Compiled tree, new tree is:" << endl;
-  for (branch *br : list) {
-    branch fakeBr (br->getText1(),br->getText2(),br->getMainText());
-    cout << fakeBr.toString() << endl;
-  }
-#endif
-}
-
+#ifdef USING_WIN
+void runServerPart(branch *root, SOCKET connection) {
+#else
 void runServerPart(branch *root, int connection) {
+#endif
   string motd = "Welcome to " + name + "!";
   say(connection,motd + "\n");
   int connected = 1;
@@ -177,12 +181,20 @@ void runServerPart(branch *root, int connection) {
       cout << "Improper symbol, closing connection..." << endl;
       connected = 0;
     }
-  } 
+  }
+#ifdef USING_WIN
+  closesocket(connection);
+#else
   close(connection);
+#endif
 }
 
 int runServer() {
   print_version(0);
+
+#ifdef USING_WIN
+  initialize_wininet();
+#endif 
  
   branch *root;
   if (check_file("default.br")) {
@@ -222,16 +234,36 @@ int runServer() {
   }
   cout << "Attempting to open server on port " << port << "..." << endl;
   bindToPort(listener,port);
+#ifdef USING_WIN
+  if (listen(listener,30) == SOCKET_ERROR)
+  {
+    fprintf(stderr,"Unable to listen: %ld\n",WSAGetLastError());
+    closesocket(listener);
+    WSACleanup();
+    return 1;
+  }
+#else
   if (listen(listener,30) == -1)
     error("Unable to listen",1);
+#endif
   struct sockaddr_storage clientAddr;
   unsigned int addressSize = sizeof(clientAddr);
   cout << "Waiting for connection..." << endl;
   while (1) {
+#ifdef USING_WIN
+    SOCKET connection = accept(listener,NULL,NULL);
+    if (connection == INVALID_SOCKET) {
+      fprintf(stderr,"Unable to accept connection: %d\n",WSAGetLastError());
+      closesocket(listener);
+      WSACleanup();
+      return 1;
+    }
+#else
     int connection = accept(listener,(struct sockaddr *)&clientAddr,&addressSize);
     cout << "Accepted connection" << endl;
     if (connection == -1)
       error("Unable to open connection socket",1);
+#endif
     thread th (runServerPart,root,connection);
     th.detach();
   }

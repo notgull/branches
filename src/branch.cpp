@@ -49,6 +49,7 @@ branch::branch(string b1, string b2, string txt) {
 
   this->branch1 = NULL;
   this->branch2 = NULL;
+  this->prev = NULL;
 }
 
 bool branch::hasBranch1() {
@@ -83,12 +84,18 @@ branch *branch::getBranch2() {
   return this->branch2;
 }
 
+branch *branch::getPrevious() {
+  return this->prev;
+}
+
 void branch::setBranch1(branch *br) {
   this->branch1 = br;
+  br->prev = this;
 }
 
 void branch::setBranch2(branch *br) {
   this->branch2 = br;
+  br->prev = this;
 }
 
 string branch::printWorthy() {
@@ -315,4 +322,23 @@ vector<branch *> branch::compileToList() {
     list.insert(list.end(),b2list.begin(),b2list.end());
   }
   return list;
+}
+
+void branch::nullifyPrevious() {
+  this->prev = NULL;
+}
+
+void brDeleteBranch(branch *br) {
+  if (br->hasBranch1())
+  {
+    brDeleteBranch(br->getBranch1());
+    br->setBranch1(NULL);
+  }
+  if (br->hasBranch2())
+  {
+    brDeleteBranch(br->getBranch2());
+    br->setBranch2(NULL);
+  }
+  br->nullifyPrevious();
+  delete br;
 }
