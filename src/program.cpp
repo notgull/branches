@@ -42,6 +42,10 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef USING_WIN
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#endif
 
 #include <iostream>
 #include <vector>
@@ -53,6 +57,9 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 using namespace std;
 
 #define INPUT_MAX_SIZE 256
+#ifndef USING_WIN
+#define INVALID_SOCKET -1
+#endif
 
 // prints version information
 void print_version(int verbose) {
@@ -217,7 +224,10 @@ int runProgram() {
           portAddr = defaultServerPort;
         }
         cout << "Connecting to " << ipAddr << ":" << portAddr << "..." << endl;
-        thing = 0;  
+        thing = 0;
+#ifdef USING_WIN
+        initialize_wininet();
+#endif
         connection = openSocket(ipAddr,portAddr);
         string motd = readIn(connection);
         cout << motd;
@@ -258,7 +268,7 @@ int runProgram() {
       ifstream myfile ("default.br");
       if (myfile.is_open())
       {
-        while ( getline (myfile,line) )
+        while (getline(myfile,line))
         {
           temp << line << '\n';
         }
@@ -299,7 +309,7 @@ int runProgram() {
         // user wants to exit the game
         printf("Exiting Branches...\n");
 	cont = 0;
-        if (connection != -1)
+        if (connection != INVALID_SOCKET)
           say(connection,"STOP_REQ\n");
 	break;
       case 'v':
@@ -314,7 +324,7 @@ int runProgram() {
         if (current->hasBranch2()) {
           previous = current;
           current = current->getBranch2();
-          if (connection != -1) {
+          if (connection != INVALID_SOCKET) {
 #ifdef DEBUG
             cout << "Sending NAV_REQ:2 to the server" << endl;
 #endif
@@ -326,7 +336,7 @@ int runProgram() {
           }
         }
 	else {
-          if (connection != -1) {
+          if (connection != INVALID_SOCKET) {
 #ifdef DEBUG
             cout << "Sending SEND_REQ:2 to the server" << endl;
 #endif
@@ -352,7 +362,7 @@ int runProgram() {
             previous = current;
 	    current->setBranch2(br);
 	    current = br;
-            if (connection != -1) {
+            if (connection != INVALID_SOCKET) {
 #ifdef DEBUG
               cout << "Sending UPLOAD_REQ:2:" << current->toString() << endl;
 #endif
@@ -368,7 +378,7 @@ int runProgram() {
         if (current->hasBranch1()) {
           previous = current;
           current = current->getBranch1();
-          if (connection != -1) {
+          if (connection != INVALID_SOCKET) {
 #ifdef DEBUG
             cout << "Sending NAV_REQ:1 to the server" << endl;
 #endif
@@ -380,7 +390,7 @@ int runProgram() {
           }
         }
 	else {
-          if (connection != -1) {
+          if (connection != INVALID_SOCKET) {
 #ifdef DEBUG
             cout << "Sending SEND_REQ:1 to the server" << endl;
 #endif
@@ -406,7 +416,7 @@ int runProgram() {
            previous = current;
            current->setBranch1(br);
            current = br;
-           if (connection != -1) {
+           if (connection != INVALID_SOCKET) {
 #ifdef DEBUG
             cout << "Sending UPLOAD_REQ:1:" << current->toString() << " to the server" << endl;
 #endif
@@ -428,10 +438,9 @@ int runProgram() {
         cout << br_CHANGELOG;
         break;
       case 'o':
-        if (connection != -1)
+        if (connection != INVALID_SOCKET)
         {
-          cout << "Unable to return to previous node while network connection is active" << endl;
-          break;
+          say(connection,"PREV_REQ\n"); 
         }
         if (current->getPrevious() == NULL)
           cout << "Unable to return to previous node" << endl;
@@ -443,7 +452,7 @@ int runProgram() {
       case 'r':
         current = root;
         previous = NULL;
-        if (connection != -1) {
+        if (connection != INVALID_SOCKET) {
 #ifdef DEBUG
           cout << "Sending RETURN_REQ to the server" << endl;
 #endif
@@ -468,7 +477,7 @@ int runProgram() {
         
         break; }
       case 'a': {
-        if (connection != -1)
+        if (connection != INVALID_SOCKET)
         {
           cout << "You are connected to a server, and are unable to read in a saved file" << endl;
         }
@@ -497,7 +506,7 @@ int runProgram() {
         }
 
         string result = temp.str();
-        brDeleteBranch(root);
+        delete root;
         root = brFromString(result);
         current = root;
         previous = NULL;
@@ -508,6 +517,9 @@ int runProgram() {
         if (current == root)
 	{
 	  current = third_tree;
+          if (connection != INVALID_SOCKET) {
+            say(connection,"THREE_REQ");  
+          }
 	  brPrint(*current);
 	  break;
 	}
@@ -519,6 +531,6 @@ int runProgram() {
 	break; }
     
   } }
-  brDeleteBranch(root);
+  delete root;
   return 0;
 }

@@ -4,8 +4,16 @@ You come across a fork in the road./Take the left path/Take the right path
    You run into a cliff... and the orc is still in persuit./Jump off the cliff/Engage in combat
     As you fall, you see a river at the bottom of the cliff./Start diving/Attempt to fly
     What weapon do you use?/Magic Wand/Steel Sword
-   BR_DEAD_END/BR_DEAD_END/BR_DEAD_END
-  BR_DEAD_END/BR_DEAD_END/BR_DEAD_END
+   You have just said the orc's true name and he instantly dies./Go inside of his house/Examine the dust
+    The inside of his house is a time machine./Go into the past/Go into the future
+    The dust reforms into a dust monster./Run away/Engage in combat
+  You see an orc doing his laundry./Creep past the house/Knock on the window
+   You see a large cliff./Jump off the cliff/Look for a way across
+    You are saved by a giant bird, who brings you to his bird nest./Run away/Try and talk to the bird
+    You see a very rickety bridge./Try and cross the bridge/Jump off anyways
+   The orc looks at you, very angry./Book it/Do nothing
+    You reach the fork in the road again./Go back the way you came/Go down the right path
+    The orc stands up, a large club in his hand./Run away/Engage in combat
  You come across a bridge crossing a river./Cross the bridge/Jump into the water
   Suddenly, the bridge begins to shake./Run across the bridge/Jump into the water
    You are just in time, and cross the bridge! You are now at a water well./Peer into the well/Wheel up some water

@@ -154,7 +154,6 @@ branch *rawFromString(string input, int indent) {
     str = input.substr (indent);
 
   vector<string> parts = splitString(str,'/');
-
   if (parts.size() != 3)
     error("Improper string",0);
 
@@ -252,11 +251,12 @@ branch *constructTree(vector<branch *> br_v, vector<int> indent_v, int indent) {
 }
 
 branch *brFromString(string str) {
- vector<string> newlines = splitString(str,'\n');
+ istringstream f(str);
+ string line;
  vector<branch *> branches(0);
   vector<int> indents(0);
   
-  for (string line : newlines) {
+  while (getline(f,line)) {
      int indent = getLineIndent(line);
      branches.push_back(rawFromString(line,indent));
      indents.push_back(indent);

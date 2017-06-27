@@ -36,11 +36,13 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 #include "err.hpp"
 #include "iswin.hpp"
 #include <stdio.h>
+#include <iostream>
 using namespace std;
 
 #ifdef USING_WIN
 
 int initialize_wininet() {
+//  cout << "Initializing wininet..." << endl;
   WSADATA wsaData;
   int result;
 
@@ -48,6 +50,7 @@ int initialize_wininet() {
   if (result != 0) {
     error("WSAStartup failed: " + result,0);
   }
+//  cout << "Initialized wininet" << endl;
   return result;
 }
 
@@ -82,16 +85,19 @@ SOCKET openListenerSocket() {
 }
 
 void bindToPort(SOCKET listener, int port) {
+//  cout << "Binding to port..." << endl;
   int iResult = bind(listener,ai_addr,ai_addrlen);
   if (iResult == SOCKET_ERROR) {
     fprintf(stderr,"Unable to bind to port: %d\n",iResult);
     closesocket(listener);
     WSACleanup();
     exit(1);
-  } 
+  }
+//  cout << "Bound to port" << endl;
 }
 
 SOCKET openSocket_win(const char *host, const char *port) {
+//  cout << "Opening socket..." << endl;
   struct addrinfo *result = NULL;
   struct addrinfo *ptr = NULL;
   struct addrinfo hints;
@@ -101,11 +107,12 @@ SOCKET openSocket_win(const char *host, const char *port) {
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_protocol = IPPROTO_TCP;
 
-  if (getaddrinfo(host,port,&hints,&result) == 0) {
-    fprintf(stderr,"Unable to resolve the address\n");
+  if (getaddrinfo(host,port,&hints,&result) != 0) {
+    fprintf(stderr,"Unable to resolve the address: %d\n",WSAGetLastError());
     WSACleanup();
     exit(1);
-  } 
+  }
+//  cout << "Got address info..." << endl;
   SOCKET connection = INVALID_SOCKET;
   ptr = result;
   connection = socket(ptr->ai_family,ptr->ai_socktype,ptr->ai_protocol);
@@ -117,6 +124,18 @@ SOCKET openSocket_win(const char *host, const char *port) {
     exit(1);
   }
 
+  int iresult = connect(connection,ptr->ai_addr,(int)ptr->ai_addrlen);
+  if (iresult == SOCKET_ERROR) {
+    closesocket(connection);
+    connection = INVALID_SOCKET;
+  }
+  freeaddrinfo(result);
+
+  if (connection == INVALID_SOCKET) {
+    fprintf(stderr,"Unable to connect to server: %d\n",WSAGetLastError());
+    WSACleanup();
+    exit(1);
+  }
   return connection;
 }
 

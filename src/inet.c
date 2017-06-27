@@ -53,7 +53,7 @@ void error(char *msg) {
 }
 
 int openListenerSocket() {
-  int s = socket(PF_INET,SOCK_STREAM,0);
+  int s = socket(PF_INET,SOCK_STREAM,IPPROTO_TCP);
   if (s == -1)
     error("Unable to open socket");
   return s;
@@ -65,6 +65,7 @@ int openSocket_c(const char *host, const char *port) {
   memset(&hints,0,sizeof(hints));
   hints.ai_family = PF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
+  hints.ai_protocol = IPPROTO_TCP;
   if (getaddrinfo(host, port, &hints, &res) == -1)
     error("Unable to resolve the address");
   int d_sock = socket(res->ai_family,res->ai_socktype,res->ai_protocol);

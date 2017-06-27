@@ -83,12 +83,24 @@ string removeReturnFrom(string line) {
 }
 
 #ifdef USING_WIN
-void runServerPart(branch *root, SOCKET connection) {
+void runServerPart(branch *root, branch *third_tree, SOCKET connection) {
 #else
-void runServerPart(branch *root, int connection) {
+void runServerPart(branch *root, branch *third_tree, int connection) {
 #endif
-  string motd = "Welcome to " + name + "!";
-  say(connection,motd + "\n");
+
+  string s;
+  stringstream motd_file (stringstream::in | stringstream::out);
+  ifstream motd_filer ("motd.conf");
+  if (motd_filer.is_open())
+  {
+    while (getline(motd_filer,s)) motd_file << s << '\n';
+    motd_filer.close();
+  }
+
+  string motd = motd_file.str();
+  if (motd.length() != 0 && motd[motd.length() - 1] != '\n')
+    motd += "\n";
+  say(connection,motd);
   int connected = 1;
   branch *current = root;
   while (connected) {
@@ -116,6 +128,15 @@ void runServerPart(branch *root, int connection) {
 #ifdef DEBUG
         cout << "Returning client pos to 0" << endl;
 #endif
+    }
+    else if (line == "PREV_REQ") {
+      if (current->getPrevious() != NULL)
+        current = current->getPrevious();
+    }
+    else if (line == "THREE_REQ") {
+      if (current == root) {
+        current = third_tree;
+      }
     }
     else if (line.find(":") != string::npos) {
       vector<string> arguments = splitString(line,':');
@@ -183,6 +204,13 @@ void runServerPart(branch *root, int connection) {
     }
   }
 #ifdef USING_WIN
+  int shutdownresult = shutdown(connection,SD_SEND);
+  if (shutdownresult == SOCKET_ERROR) {
+    fprintf(stderr,"Shutdown failed: %d\n",WSAGetLastError());
+    closesocket(connection);
+    WSACleanup();
+    exit(1);
+  }
   closesocket(connection);
 #else
   close(connection);
@@ -264,8 +292,14 @@ int runServer() {
     if (connection == -1)
       error("Unable to open connection socket",1);
 #endif
-    thread th (runServerPart,root,connection);
+    thread th (runServerPart,root,third_tree,connection);
     th.detach();
   }
+#ifdef USING_WIN
+  closesocket(listener);
+  WSACleanup();
+#else
+  close(listener);
+#endif
   return 0;
 }

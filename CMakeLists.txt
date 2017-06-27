@@ -43,8 +43,8 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${LINK_FLAGS}")
 # set version information
 set(br_VERSION "\"BETA\"")
 set(br_REVISION "2")
-set(br_MINOR_REVISION "1")
-set(br_CHANGELOG "\"-Fixed Windows compatibility issues\\nExpanded the default tree by quite a bit\\n-Kind of fixed the previous node option\\n-Added increased network security\\n\"")
+set(br_MINOR_REVISION "2")
+set(br_CHANGELOG "\"-Fixed an issue that caused Windows users to segfault\\n-Added MOTD Configuration\\n-Fixed the \\'o\\' command\\n\"")
 
 # set server information
 if (COMPILE_SERVER)
