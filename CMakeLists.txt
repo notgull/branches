@@ -44,7 +44,7 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${LINK_FLAGS}")
 set(br_VERSION "\"BETA\"")
 set(br_REVISION "2")
 set(br_MINOR_REVISION "2")
-set(br_CHANGELOG "\"-Fixed an issue that caused Windows users to segfault\\n-Added MOTD Configuration\\n-Fixed the \\'o\\' command\\n\"")
+set(br_CHANGELOG "\"-Fixed an issue that caused Windows users to segfault\\n-Added MOTD Configuration\\n-Fixed the \\'o\\' command\\n-Revised an easter egg\\n\"")
 
 # set server information
 if (COMPILE_SERVER)

@@ -249,6 +249,7 @@ int runProgram() {
   newline();
   
   branch *root;
+  branch *third_tree;
   if (connection == -1) {
     if (check_file("default.br")) {
       // initial branch
@@ -275,6 +276,15 @@ int runProgram() {
         myfile.close();
       }
       root = brFromString(temp.str());
+      if (!(check_file("default.br.thirdtree"))) {
+        temp = stringstream (stringstream::in | stringstream::out);
+        myfile = ifstream ("default.br.thirdtree");
+        if (myfile.is_open()) {
+          while (getline(myfile,line)) temp << line << '\n';
+          myfile.close();
+        }
+        third_tree = brFromString(temp.str());
+      }
     }
   }
   else {
@@ -284,10 +294,18 @@ int runProgram() {
       rootString = rootString.substr(0,rootString.length() - 1);
     //cout << "Received: " << rootString << endl;
     root = brFromString(rootString);
+    say(connection,"TTREE_REQ\n");
+    string result_thirdtree = readIn(connection);
+    if (result_thirdtree.length() != 0 && result_thirdtree[0] != '0') {
+      if (result_thirdtree[result_thirdtree.length() - 1] == '\n')
+        result_thirdtree = result_thirdtree.substr(0,result_thirdtree.length() - 1);
+      third_tree = brFromString(result_thirdtree);
+    }
   }
   brPrint(*root);
-  
-  branch *third_tree = new branch("Drop kick it","Stab someone","You pick up the fork");
+ 
+  if (!third_tree) 
+    third_tree = new branch("Drop kick it","Stab someone","You pick up the fork");
  
   // current branch
   branch *current = root;
@@ -472,6 +490,11 @@ int runProgram() {
           output.open(filename);
           output << root->toString();
           output.close();
+          if (third_tree) {
+            output.open(filename + ".thirdtree");
+            output << third_tree->toString(); 
+            output.close();
+          }
           cout << "Sucessfully saved file!" << endl;
         }
         
@@ -518,7 +541,7 @@ int runProgram() {
 	{
 	  current = third_tree;
           if (connection != INVALID_SOCKET) {
-            say(connection,"THREE_REQ");  
+            say(connection,"THREE_REQ\n");  
           }
 	  brPrint(*current);
 	  break;

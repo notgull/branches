@@ -123,6 +123,14 @@ void runServerPart(branch *root, branch *third_tree, int connection) {
         cout << "Sending " << fkRoot.toString() << endl;
 #endif
     }
+    else if (line == "TTREE_REQ") {
+      if (third_tree) {
+        branch fkTTree (third_tree->getText1(),third_tree->getText2(),third_tree->getMainText());
+        say(connection,fkTTree.toString() + "\n");
+      }
+      else
+        say(connection,"0\n");
+    }
     else if (line == "RETURN_REQ") {
           current = root;
 #ifdef DEBUG
@@ -225,6 +233,7 @@ int runServer() {
 #endif 
  
   branch *root;
+  branch *third_tree;
   if (check_file("default.br")) {
     // initial branch
     root = new branch("Take the left path", "Take the right path", "You come across a fork in the road.");
@@ -250,9 +259,19 @@ int runServer() {
       myfile.close();
     }
     root = brFromString(temp.str());
+    if (!(check_file("default.br.thirdtree"))) {
+      temp = stringstream (stringstream::in | stringstream::out);
+      myfile = ifstream ("default.br.thirdtree");
+      if (myfile.is_open()) {
+        while (getline(myfile,line)) temp << line << '\n';
+        myfile.close();
+      }
+      third_tree = brFromString(temp.str());
+    }
   }
-  
-  branch *third_tree = new branch("Drop kick it","Stab someone","You pick up the fork");
+ 
+  if (!third_tree) 
+    third_tree = new branch("Drop kick it","Stab someone","You pick up the fork");
   branch fkRoot (root->getText1(),root->getText2(),root->getMainText());
 
   listener = openListenerSocket();
