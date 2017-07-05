@@ -90,12 +90,14 @@ branch *branch::getPrevious() {
 
 void branch::setBranch1(branch *br) {
   this->branch1 = br;
-  br->prev = this;
+  if (br)
+    br->prev = this;
 }
 
 void branch::setBranch2(branch *br) {
   this->branch2 = br;
-  br->prev = this;
+  if (br)
+    br->prev = this;
 }
 
 string branch::printWorthy() {

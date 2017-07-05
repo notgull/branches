@@ -39,6 +39,7 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 #include "shortcuts.hpp"
 #include "program.hpp"
 #include "splitstr.hpp"
+#include "branches_config.hpp"
 
 #include <iostream>
 #include <vector>
@@ -225,6 +226,135 @@ void runServerPart(branch *root, branch *third_tree, int connection) {
 #endif
 }
 
+void displayAdminCmds() {
+    cout << "List of commands:" << endl;
+    cout << "1 - select branch number one" << endl;
+    cout << "2 - select branch number two" << endl;
+    cout << "3 - select branch number three (only works at root branch)" << endl;
+    cout << "r - return to start" << endl;
+    cout << "f - replace a node with another node" << endl;
+    cout << "d - delete a node" << endl;
+    cout << "p - reprints the current node to the console" << endl;
+    cout << "s - saves current tree to a file" << endl;
+    cout << "v - prints version information" << endl;
+    cout << "c - prints change log" << endl;
+    cout << "h - list this help menu again" << endl;
+    cout << "e - close the server" << endl;
+    cout << "Enter the letter and press the Enter key to use the command" << endl;       
+}
+
+void adminConsole(branch *root, branch *third_tree) {
+  displayAdminCmds();
+  branch *current = root;
+  while (1) {
+    shell_tx();
+    string answer;
+    getline(cin,answer);
+    switch (answer[0]) {
+      case '1':
+        if (current->hasBranch1())
+          current = current->getBranch1();
+        else if (yesno(0,"You have reached the end. Would you like to create a new node?")) {
+          current->setBranch1(usr_input_branch());
+          current = current->getBranch2();
+        } 
+        brPrint(*current);
+        break;
+      case '2':
+        if (current->hasBranch2())
+          current = current->getBranch2();
+        else if (yesno(0,"You have reached the end. Would you like to create a new node?")) {
+          current->setBranch2(usr_input_branch());
+          current = current->getBranch2();
+        }
+        brPrint(*current);
+        break;
+      case '3':
+        if (current == root) {
+          current = third_tree;
+          brPrint(*current);
+        } else {
+          cout << "Not at root branch" << endl;
+        }
+        break;
+      case 'r':
+        current = root;
+        brPrint(*current);
+        break;
+      case 'p':
+        brPrint(*current);
+        break;
+      case 'v':
+        print_version(1);
+        break;
+      case 'h':
+        displayAdminCmds();
+        break;
+      case 's':
+        if (yesno(0,"Do you really want to save your progress?")) {
+          string filename;
+          cout << "Enter filename: ";
+          getline(cin,filename);
+          if (filename[filename.length() - 1] == '\n')
+            filename = filename.substr(0,filename.length() - 1);
+          ofstream output;
+          output.open(filename);
+          output << root->toString();
+          output.close();
+          if (third_tree) {
+            output.open(filename + ".thirdtree");
+            output << third_tree->toString();
+            output.close();
+          }
+          cout << "Successfully saved file!" << endl;
+        }
+        break;
+      case 'c':
+        cout << "New in Branches v" << br_VERSION <<"." << br_REVISION <<"." << br_MINOR_REVISION << "..." << endl;
+        cout << br_CHANGELOG;
+        break;
+      case 'e':
+        cout << "Closing server..." << endl;
+#ifdef USING_WIN
+        closesocket(listener);
+        WSACleanup();
+#else
+        close(listener);
+#endif
+        exit(0);
+        break;
+      case 'f':
+        if (yesno(0,"Do you really want to replace this node?")) {
+          branch *replacement = usr_input_branch();
+          branch *previous = current->getPrevious();
+          if (previous->getBranch1() == current)
+            previous->setBranch1(replacement);
+          else
+            previous->setBranch2(replacement);
+          replacement->setBranch1(current->getBranch1());
+          replacement->setBranch2(current->getBranch2());
+          current = replacement;
+        }
+        brPrint(*current);
+        break;
+      case 'd':
+        if (yesno(0,"Do you really want to delete this node?")) {
+          branch *previous = current->getPrevious();
+          if (previous->getBranch1() == current)
+            previous->setBranch1(NULL);
+          else
+            previous->setBranch2(NULL);
+          current = previous;
+        }
+        brPrint(*current);
+        break;
+     default:
+        cout << "Invalid command, please reenter" << endl;
+        break;
+    }  
+  }
+}
+
 int runServer() {
   print_version(0);
 
@@ -281,6 +411,9 @@ int runServer() {
   }
   cout << "Attempting to open server on port " << port << "..." << endl;
   bindToPort(listener,port);
+  cout << "Opening admin console..." << endl;
+  thread administrator_console (adminConsole,root,third_tree);
+  administrator_console.detach();
 #ifdef USING_WIN
   if (listen(listener,30) == SOCKET_ERROR)
   {
@@ -308,6 +441,7 @@ int runServer() {
 #else
     int connection = accept(listener,(struct sockaddr *)&clientAddr,&addressSize);
     cout << "Accepted connection" << endl;
+    shell_tx();
     if (connection == -1)
       error("Unable to open connection socket",1);
 #endif

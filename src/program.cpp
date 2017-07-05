@@ -39,6 +39,7 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 #include "splitstr.hpp"
 #include "branches_config.hpp"
 #include "iswin.hpp"
+#include "bscript.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -96,10 +97,11 @@ void print_cmds() {
   cout << "o - go backwards by one node" << endl;
   cout << "p - reprints the current node to the console" << endl;
   cout << "s - saves current tree to a file" << endl;
+  cout << "a - reads new tree from a file" << endl;
+  cout << "b - opens bscript commands" << endl;
   cout << "v - prints version information" << endl;
   cout << "c - prints change log" << endl;
   cout << "h - list this help menu again" << endl;
-  cout << "w - view warranty information" << endl;
   cout << "e - exit the game" << endl;
   cout << "Enter the letter and press the Enter key to use the command" << endl;
 }
@@ -306,7 +308,10 @@ int runProgram() {
  
   if (!third_tree) 
     third_tree = new branch("Drop kick it","Stab someone","You pick up the fork");
- 
+
+  // keep track of numbers for bscript
+  vector<int> path (0);
+  
   // current branch
   branch *current = root;
   branch *previous = NULL;
@@ -352,6 +357,7 @@ int runProgram() {
             cout << "Received result " << input << endl;
 #endif
           }
+          path.push_back(2);
         }
 	else {
           if (connection != INVALID_SOCKET) {
@@ -371,6 +377,7 @@ int runProgram() {
 
               current->setBranch2(newBranchPtr);
               current = current->getBranch2();
+              path.push_back(2);
               brPrint(*current);
               break;
             } 
@@ -379,6 +386,7 @@ int runProgram() {
 	    branch *br = usr_input_branch();
             previous = current;
 	    current->setBranch2(br);
+            path.push_back(2);
 	    current = br;
             if (connection != INVALID_SOCKET) {
 #ifdef DEBUG
@@ -387,8 +395,12 @@ int runProgram() {
               say(connection,"UPLOAD_REQ:2:" + current->toString() + '\n');
             }
 	  }
-	  else
+	  else {
 	    current = root;
+            path.clear();
+            if (connection != INVALID_SOCKET)
+              say(connection,"RETURN_REQ\n");
+          }
 	}
 	brPrint(*current);
 	break;
@@ -396,6 +408,7 @@ int runProgram() {
         if (current->hasBranch1()) {
           previous = current;
           current = current->getBranch1();
+          path.push_back(1);
           if (connection != INVALID_SOCKET) {
 #ifdef DEBUG
             cout << "Sending NAV_REQ:1 to the server" << endl;
@@ -425,6 +438,7 @@ int runProgram() {
 
               current->setBranch1(newBranchPtr);
               current = current->getBranch1();
+              path.push_back(1);
               brPrint(*current);
               break;
            } 
@@ -433,6 +447,7 @@ int runProgram() {
            branch *br = usr_input_branch();
            previous = current;
            current->setBranch1(br);
+           path.push_back(1);
            current = br;
            if (connection != INVALID_SOCKET) {
 #ifdef DEBUG
@@ -441,10 +456,12 @@ int runProgram() {
             say(connection,"UPLOAD_REQ:1:" + current->toString() + '\n');
            }
          }
-	 else
+	 else {
            current = root;
-          
-	  
+           path.clear();
+           if (connection != INVALID_SOCKET)
+            say(connection,"RETURN_REQ\n");
+	 }
 	}
         brPrint(*current);
         break;
@@ -464,11 +481,13 @@ int runProgram() {
           cout << "Unable to return to previous node" << endl;
         else {
           current = current->getPrevious();
+          path = vector<int>(path.begin(),path.end() - 1);
           brPrint(*current);
         }
       	break;
       case 'r':
         current = root;
+        path.clear();
         previous = NULL;
         if (connection != INVALID_SOCKET) {
 #ifdef DEBUG
@@ -521,7 +540,7 @@ int runProgram() {
         ifstream myfile (filename);
         if (myfile.is_open())
         {
-          while ( getline (myfile,line) )
+          while (getline (myfile,line))
           {
             temp << line << '\n';
           }
@@ -535,6 +554,50 @@ int runProgram() {
         previous = NULL;
         brPrint(*root);
         //cout << "Feature currently unavailible");
+        break; }
+      case 'b': {
+        cout << "r - read from a bscript file" << endl;
+        cout << "w - write to a bscript file" << endl;
+        cout << "e - return to the game" << endl;
+        string bscrDummy;
+        getline(cin,bscrDummy);
+        shell_tx();
+        string bscrResult;
+        getline(cin,bscrResult);
+        switch (bscrResult[0]) {
+          case 'r':
+            if (yesno(0,"Reading from a bscript will send you to the desired position. However, you will lose your current position. Proceed?")) {
+              cout << "Enter filename: ";
+              getline(cin,bscrResult);
+              vector<int> bscr = bscrRead(bscrResult);
+              current = bscrFollow(bscr,root,third_tree);
+              path = bscr;
+            }
+            else 
+              cout << "Returning to game..." << endl;
+            brPrint(*current);
+            break;
+          case 'w':
+            cout << "Enter filename: ";
+            getline(cin,bscrResult);
+#ifdef DEBUG
+            cout << "path is: "; 
+            for (int i : path)
+              cout << i << ", ";
+            cout << endl;
+#endif
+            bscrWrite(path,bscrResult);
+            cout << "Saved file!" << endl;
+            brPrint(*current);
+            break;
+          case 'e':
+            brPrint(*current);
+            break;
+          default:
+            cout << "Invalid command, returning to game..." << endl;
+            brPrint(*current);
+            break;
+        }
         break; }
       case '3': {
         if (current == root)

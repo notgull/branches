@@ -27,7 +27,7 @@ endif (MINGW OR MSYS)
 option(COMPILE_WITH_STATIC "Compile with the -static option" ${CWS_DEFAULT})
 option(COMPILE_SERVER "Compile the server edition of branches" OFF)
 
-set(COMPILE_FLAGS "-Iinclude -pthread")
+set(COMPILE_FLAGS "-Iinclude -pthread -Wsizeof-array-argument")
 set(LINK_FLAGS " ")
 
 if (COMPILE_WITH_STATIC)
@@ -43,8 +43,8 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${LINK_FLAGS}")
 # set version information
 set(br_VERSION "\"BETA\"")
 set(br_REVISION "2")
-set(br_MINOR_REVISION "2")
-set(br_CHANGELOG "\"-Fixed an issue that caused Windows users to segfault\\n-Added MOTD Configuration\\n-Fixed the \\'o\\' command\\n-Revised an easter egg\\n\"")
+set(br_MINOR_REVISION "3")
+set(br_CHANGELOG "\"-Added administrator console for server\\n-Added bscript\\n-Fixed a bug that could cause the server and the client to become offset\\n\"")
 
 # set server information
 if (COMPILE_SERVER)
