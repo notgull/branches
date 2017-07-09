@@ -32,6 +32,9 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 
  */
 
+#include "branches_config.hpp"
+#if br_SERVER == 1
+
 #include "server.hpp"
 #include "branch.hpp"
 #include "inet_cxx.hpp"
@@ -39,7 +42,6 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 #include "shortcuts.hpp"
 #include "program.hpp"
 #include "splitstr.hpp"
-#include "branches_config.hpp"
 
 #include <iostream>
 #include <vector>
@@ -111,20 +113,20 @@ void runServerPart(branch *root, branch *third_tree, int connection) {
 #ifdef DEBUG
     cout << "Received request: " << line << endl;
 #endif 
-    if (line == "STOP_REQ") {
+    if (line == "S") {
       connected = 0;
 #ifdef DEBUG
          cout << "Disconnecting client..." << endl;
 #endif
     } 
-    else if (line == "ROOT_REQ") {
+    else if (line == "R") {
       branch fkRoot (root->getText1(),root->getText2(),root->getMainText());
       say(connection,fkRoot.toString() + "\n");
 #ifdef DEBUG
         cout << "Sending " << fkRoot.toString() << endl;
 #endif
     }
-    else if (line == "TTREE_REQ") {
+    else if (line == "T") {
       if (third_tree) {
         branch fkTTree (third_tree->getText1(),third_tree->getText2(),third_tree->getMainText());
         say(connection,fkTTree.toString() + "\n");
@@ -132,24 +134,24 @@ void runServerPart(branch *root, branch *third_tree, int connection) {
       else
         say(connection,"0\n");
     }
-    else if (line == "RETURN_REQ") {
+    else if (line == "Q") {
           current = root;
 #ifdef DEBUG
         cout << "Returning client pos to 0" << endl;
 #endif
     }
-    else if (line == "PREV_REQ") {
+    else if (line == "P") {
       if (current->getPrevious() != NULL)
         current = current->getPrevious();
     }
-    else if (line == "THREE_REQ") {
+    else if (line == "3") {
       if (current == root) {
         current = third_tree;
       }
     }
     else if (line.find(":") != string::npos) {
       vector<string> arguments = splitString(line,':');
-      if (arguments[0] == "NAV_REQ" || arguments[0] == "SEND_REQ") {
+      if (arguments[0] == "N" || arguments[0] == "E") {
         int brn = atoi(arguments[1].c_str());
 #ifdef DEBUG
           cout << "Identified brn as " << brn << endl;
@@ -173,19 +175,19 @@ void runServerPart(branch *root, branch *third_tree, int connection) {
           output = "1";
         else  {
           output = "0";
-          if (arguments[0] == "SEND_REQ") {
+          if (arguments[0] == "E") {
             branch *original = current;
             branch copy (original->getText1(),original->getText2(),original->getMainText());
+            if (original->isEnding())
+              copy = branch (original->getMainText());
             output += ":";
             output += copy.toString();
           }
         }
-#ifdef DEBUG
-            cout << "Sending: " << output << endl;
-#endif
+//            cout << "Sending: " << output << endl;
         say(connection,output + "\n");
       }
-      else if (arguments[0] == "UPLOAD_REQ") {
+      else if (arguments[0] == "U") {
         int brn = atoi(arguments[1].c_str());
 #ifdef DEBUG
           cout << "brn determined to be " << brn << endl;
@@ -246,14 +248,26 @@ void displayAdminCmds() {
 void adminConsole(branch *root, branch *third_tree) {
   displayAdminCmds();
   branch *current = root;
-  while (1) {
+  int cont = 1;
+  while (cont) {
     shell_tx();
     string answer;
     getline(cin,answer);
     switch (answer[0]) {
       case '1':
-        if (current->hasBranch1())
+        if (current->hasBranch1()) {
+          if (current->getBranch1()->isEnding()) {
+            if ((yesno(0,current->getBranch1()->getMainText() + " Return to beginning?")))
+            {
+              current = root;
+            }
+            else {
+              cout << "Exiting Branches..." << endl;
+              cont = 0;
+            }
+          }
           current = current->getBranch1();
+        }
         else if (yesno(0,"You have reached the end. Would you like to create a new node?")) {
           current->setBranch1(usr_input_branch());
           current = current->getBranch2();
@@ -261,8 +275,18 @@ void adminConsole(branch *root, branch *third_tree) {
         brPrint(*current);
         break;
       case '2':
-        if (current->hasBranch2())
+        if (current->hasBranch2()) {
+          if (current->getBranch1()->isEnding()) {
+            if ((yesno(0,current->getBranch1()->getMainText() + " Return to beginning?")))
+            {
+              current = root;
+            }
+            else {
+              cout << "Exiting Branches..." << endl;
+            }
+          }
           current = current->getBranch2();
+        }
         else if (yesno(0,"You have reached the end. Would you like to create a new node?")) {
           current->setBranch2(usr_input_branch());
           current = current->getBranch2();
@@ -456,3 +480,5 @@ int runServer() {
 #endif
   return 0;
 }
+
+#endif

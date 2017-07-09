@@ -46,6 +46,18 @@ branch::branch(string b1, string b2, string txt) {
   this->b1 = b1;
   this->b2 = b2;
   this->txt = txt;
+  this->isEnd = false;
+
+  this->branch1 = NULL;
+  this->branch2 = NULL;
+  this->prev = NULL;
+}
+
+branch::branch(string txt) {
+  this->b1 = "";
+  this->b2 = "";
+  this->txt = txt;
+  this->isEnd = true;
 
   this->branch1 = NULL;
   this->branch2 = NULL;
@@ -86,6 +98,10 @@ branch *branch::getBranch2() {
 
 branch *branch::getPrevious() {
   return this->prev;
+}
+
+bool branch::isEnding() {
+  return this->isEnd;
 }
 
 void branch::setBranch1(branch *br) {
@@ -163,7 +179,11 @@ branch *rawFromString(string input, int indent) {
   string b1 = parts[1];
   string b2 = parts[2];
  
-  branch *br = new branch(b1,b2,txt);
+  branch *br = 0;
+  if (b1 == BR_DEAD_END && b2 == BR_DEAD_END)
+    br = new branch(txt);
+  else
+    br = new branch(b1,b2,txt);
   return br; 
 }
 
@@ -171,9 +191,7 @@ branch *constructTree(vector<branch *> br_v, vector<int> indent_v, int indent) {
   int targetIndent = indent + 1;
   branch *target = br_v[0];
 
-
   if (br_v.size() == 1) {
-
     return target;
   }
 
@@ -274,11 +292,18 @@ string brToStringInternal(branch *br, int indent) {
   for (int i = 0; i < indent; i++)
     str += " ";
 
+  string text1 = br->getText1();
+  string text2 = br->getText2();
+  if (br->isEnding()) {
+    text1 = BR_DEAD_END;
+    text2 = BR_DEAD_END;
+  }
+
   str += br->getMainText();
   str += "/";
-  str += br->getText1();
+  str += text1;
   str += "/";
-  str += br->getText2();
+  str += text2;
   str += "\n";
 
   if (br->hasBranch1() == 0 && br->hasBranch2() == 0)

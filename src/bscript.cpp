@@ -33,6 +33,9 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "bscript.hpp"
+#include "iswin.hpp"
+#include "inet_cxx.hpp"
+#include "splitstr.hpp"
 #include <sstream>
 #include <fstream>
 using namespace std;
@@ -63,15 +66,55 @@ vector<int> bscrRead(string filename) {
   return retV;
 } 
 
-branch *bscrFollow(vector<int> values, branch *root, branch *third_tree) {
+#ifdef USING_WIN
+branch *bscrFollow(vector<int> values, branch *root, branch *third_tree, SOCKET sock) {
+#else
+#define INVALID_SOCKET -1
+branch *bscrFollow(vector<int> values, branch *root, branch *third_tree, int sock) {
+#endif
   branch *current = root;
   for (int i : values) {
-    if (i == 1 && current->hasBranch1())
+    if (i == 1 && current->hasBranch1()) {
       current = current->getBranch1();
-    if (i == 2 && current->hasBranch2())
+      if (sock != INVALID_SOCKET)
+        say(sock,"N:1\n");   
+    }
+    else if (i == 1 && sock != INVALID_SOCKET && !(current->hasBranch1())) {
+      say(sock,"E:1\n");
+      string result = readIn(sock);
+      if (result[0] != '1')
+      {
+        string br = (splitString(result,':'))[0];
+        current->setBranch1(brFromString(br));
+        current = current->getBranch1();
+      }
+      else return current;
+    }
+    else if (i == 1 && !(current->hasBranch1())) return current;
+
+    if (i == 2 && current->hasBranch2()) {
       current = current->getBranch2();
-    if (i == 3 && current == root)
+      if (sock != INVALID_SOCKET)
+        say(sock,"N:2\n");   
+    }
+    else if (i == 2 && sock != INVALID_SOCKET && !(current->hasBranch2())) {
+      say(sock,"E:2\n");
+      string result = readIn(sock);
+      if (result[0] != '1')
+      {
+        string br = (splitString(result,':'))[0];
+        current->setBranch2(brFromString(br));
+        current = current->getBranch2();
+      }
+      else return current;
+    }
+    else if (i == 2 && !(current->hasBranch2())) return current;
+
+    if (i == 3 && current == root) {
       current = third_tree;
+      if (sock != INVALID_SOCKET)
+        say(sock,"3\n");
+    }
   }
   return current;
 }

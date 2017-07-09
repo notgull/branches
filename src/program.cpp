@@ -57,6 +57,8 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 #include <thread>
 using namespace std;
 
+#define BR_DEAD_END "BR_DEAD_END"
+
 #define INPUT_MAX_SIZE 256
 #ifndef USING_WIN
 #define INVALID_SOCKET -1
@@ -64,8 +66,14 @@ using namespace std;
 
 // prints version information
 void print_version(int verbose) {
+   cout << " ____                       _"                << endl;               
+   cout << "| __ ) _ __ __ _ _ __   ___| |__   ___  ___"  << endl; 
+   cout << "|  _ \\| '__/ _` | '_ \\ / __| '_ \\ / _ \\/ __|" << endl;
+   cout << "| |_) | | | (_| | | | | (__| | | |  __/\\__ \\" << endl;
+   cout << "|____/|_|  \\__,_|_| |_|\\___|_| |_|\\___||___/" << endl;
+
   if (!verbose)
-    cout << "====== Welcome to Branches v" << br_VERSION << "." << br_REVISION << "." << br_MINOR_REVISION << " ======" << endl;
+    cout << "Branches v" << br_VERSION << "." << br_REVISION << "." << br_MINOR_REVISION << ", by John Nunley" << endl;
   else
     cout << "You are using: Branches Version " <<  br_VERSION << " Revision " << br_REVISION << " Minor Revision " << br_MINOR_REVISION << endl;
 }
@@ -106,6 +114,10 @@ void print_cmds() {
   cout << "Enter the letter and press the Enter key to use the command" << endl;
 }
 
+bool isValidInput(string inp) {
+  return (inp != BR_DEAD_END && inp != "" && inp != "\n");
+}
+
 // make a new branch from user input
 branch *usr_input_branch() {
 /*char main_text[INPUT_MAX_SIZE];
@@ -140,18 +152,34 @@ branch *usr_input_branch() {
     if ((strlen(b2)>0) && (b2[strlen (b2) - 1] == '\n'))
         b2[strlen (b2) - 1] = '\0';
     */
+    bool endingBranch = false;
+    if (yesno(0,"Will this be an ending branch?"))
+      endingBranch = true;
     cout << "Enter Main Text: ";
     getline(cin,main_text);
-    cout << "Enter Option 1: ";
-    getline(cin,b1);
-    cout << "Enter Option 2: ";
-    getline(cin,b2);
-    newline();
+    if (!endingBranch) {
+      cout << "Enter Option 1: ";
+      getline(cin,b1);
+      cout << "Enter Option 2: ";
+      getline(cin,b2);
+      newline();
+      if (!(isValidInput(main_text) && isValidInput(b1) && isValidInput(b2))) {
+        cout << "Invalid node" << endl;
+        continue;
+      }
+    }
     cout << "Here is your branch:" << endl;
     newline();
-    branch *br = new branch(b1,b2,main_text);
+    branch *br = 0;
+    if (!endingBranch)
+      br = new branch(b1,b2,main_text);
+    else
+      br = new branch(main_text);
     //branch br = brCreate("test","test",main_text);
-    brPrint(*br);
+    if (!endingBranch)
+      brPrint(*br);
+    else
+      cout << br->getMainText() << endl;
     if (yesno(0,"Is this okay?")) {
       newline();
       return br;
@@ -179,6 +207,7 @@ string id;
 
 string dummy_geturl;
 
+#if br_SERVER == 0
 // program entry point
 int runProgram() {
   // introduce the help menu and version info
@@ -290,13 +319,13 @@ int runProgram() {
     }
   }
   else {
-    say(connection,"ROOT_REQ\n");
+    say(connection,"R\n");
     string rootString = readIn(connection);
     if (rootString.length() != 0 && rootString[rootString.length() - 1] == '\n')
       rootString = rootString.substr(0,rootString.length() - 1);
     //cout << "Received: " << rootString << endl;
     root = brFromString(rootString);
-    say(connection,"TTREE_REQ\n");
+    say(connection,"T\n");
     string result_thirdtree = readIn(connection);
     if (result_thirdtree.length() != 0 && result_thirdtree[0] != '0') {
       if (result_thirdtree[result_thirdtree.length() - 1] == '\n')
@@ -333,7 +362,7 @@ int runProgram() {
         printf("Exiting Branches...\n");
 	cont = 0;
         if (connection != INVALID_SOCKET)
-          say(connection,"STOP_REQ\n");
+          say(connection,"S\n");
 	break;
       case 'v':
         // print verbose game information
@@ -345,26 +374,44 @@ int runProgram() {
 	break;
       case '2':
         if (current->hasBranch2()) {
-          previous = current;
-          current = current->getBranch2();
-          if (connection != INVALID_SOCKET) {
+          if (current->getBranch2()->isEnding()) {
+            if ((yesno(0,current->getBranch2()->getMainText() + " Return to beginning?")))
+            {
+              current = root;
+              path.clear();
+              if (connection != INVALID_SOCKET)
+                say(connection,"Q\n");
+            }
+            else {
+              cout << "Exiting Branches..." << endl;
+              cont = 0;
+              if (connection != INVALID_SOCKET)
+                say(connection,"S\n");
+              return 0;
+            }
+          }
+          else {
+            previous = current;
+            current = current->getBranch2();
+            if (connection != INVALID_SOCKET) {
 #ifdef DEBUG
-            cout << "Sending NAV_REQ:2 to the server" << endl;
+            cout << "Sending N:2 to the server" << endl;
 #endif
-            say(connection,"NAV_REQ:2\n");
-            string input = readIn(connection);
+              say(connection,"N:2\n");
+              string input = readIn(connection);
 #ifdef DEBUG
             cout << "Received result " << input << endl;
 #endif
+            }
+            path.push_back(2);
           }
-          path.push_back(2);
         }
 	else {
           if (connection != INVALID_SOCKET) {
 #ifdef DEBUG
-            cout << "Sending SEND_REQ:2 to the server" << endl;
+            cout << "Sending E:2 to the server" << endl;
 #endif
-            say(connection,"SEND_REQ:2\n");
+            say(connection,"E:2\n");
             string newBranch = readIn(connection);
             if (newBranch.length() != 0 && newBranch[0] == '0') {
               if (newBranch[newBranch.length() - 1] == '\n')
@@ -376,9 +423,27 @@ int runProgram() {
               branch *newBranchPtr = brFromString(actualBranch);
 
               current->setBranch2(newBranchPtr);
-              current = current->getBranch2();
-              path.push_back(2);
-              brPrint(*current);
+              if (newBranchPtr->isEnding()) {
+                if ((yesno(0,newBranchPtr->getMainText() + " Return to beginning?")))
+                {
+                  current = root;
+                  path.clear();
+                  if (connection != INVALID_SOCKET)
+                    say(connection,"Q\n");
+                }
+                else {
+                  cout << "Exiting Branches..." << endl;
+                  cont = 0;
+                  if (connection != INVALID_SOCKET)
+                    say(connection,"S\n");
+                  return 0;
+                }
+              }
+              else {
+                current = current->getBranch2();
+                path.push_back(2);
+                brPrint(*current);
+              }
               break;
             } 
           }
@@ -387,45 +452,64 @@ int runProgram() {
             previous = current;
 	    current->setBranch2(br);
             path.push_back(2);
-	    current = br;
+            if (!(br->isEnding()))
+	      current = br;
             if (connection != INVALID_SOCKET) {
 #ifdef DEBUG
-              cout << "Sending UPLOAD_REQ:2:" << current->toString() << endl;
+              cout << "Sending U:2:" << current->toString() << endl;
 #endif
-              say(connection,"UPLOAD_REQ:2:" + current->toString() + '\n');
+              say(connection,"U:2:" + (current->hasBranch2() ? current->getBranch2()->toString() : current->toString()) + '\n');
             }
 	  }
 	  else {
 	    current = root;
             path.clear();
             if (connection != INVALID_SOCKET)
-              say(connection,"RETURN_REQ\n");
+              say(connection,"Q\n");
           }
 	}
 	brPrint(*current);
 	break;
       case '1':
         if (current->hasBranch1()) {
-          previous = current;
-          current = current->getBranch1();
-          path.push_back(1);
-          if (connection != INVALID_SOCKET) {
+          if (current->getBranch1()->isEnding()) {
+            if ((yesno(0,current->getBranch1()->getMainText() + " Return to beginning?")))
+            {
+              current = root;
+              path.clear();
+              if (connection != INVALID_SOCKET)
+                say(connection,"Q\n");
+            }
+            else {
+              cout << "Exiting Branches..." << endl;
+              cont = 0;
+              if (connection != INVALID_SOCKET)
+                say(connection,"S\n");
+              return 0;
+            }
+          }
+          else {
+            previous = current;
+            current = current->getBranch1();
+            path.push_back(1);
+            if (connection != INVALID_SOCKET) {
 #ifdef DEBUG
-            cout << "Sending NAV_REQ:1 to the server" << endl;
+            cout << "Sending N:1 to the server" << endl;
 #endif
-            say(connection,"NAV_REQ:1\n");
-            string input = readIn(connection);
+              say(connection,"N:1\n");
+              string input = readIn(connection);
 #ifdef DEBUG
             cout << "Received result " << input << endl;
 #endif
+            }
           }
         }
 	else {
           if (connection != INVALID_SOCKET) {
 #ifdef DEBUG
-            cout << "Sending SEND_REQ:1 to the server" << endl;
+            cout << "Sending E:1 to the server" << endl;
 #endif
-             say(connection,"SEND_REQ:1\n");
+             say(connection,"E:1\n");
             string newBranch = readIn(connection);
             if (newBranch.length() != 0 && newBranch[0] == '0') {
               if (newBranch[newBranch.length() - 1] == '\n')
@@ -435,11 +519,28 @@ int runProgram() {
               cout << "Received: " << actualBranch << endl;
 #endif
               branch *newBranchPtr = brFromString(actualBranch);
-
-              current->setBranch1(newBranchPtr);
-              current = current->getBranch1();
-              path.push_back(1);
-              brPrint(*current);
+              if (newBranchPtr->isEnding()) {
+                if ((yesno(0,newBranchPtr->getMainText() + " Return to beginning?")))
+                {
+                  current = root;
+                  path.clear();
+                  if (connection != INVALID_SOCKET)
+                    say(connection,"Q\n");
+                }
+                else {
+                  cout << "Exiting Branches..." << endl;
+                  cont = 0;
+                  if (connection != INVALID_SOCKET)
+                    say(connection,"S\n");
+                  return 0;
+                }
+              }
+              else {
+                current->setBranch1(newBranchPtr);
+                current = current->getBranch1();
+                path.push_back(1);
+                brPrint(*current);
+              }
               break;
            } 
          }
@@ -448,19 +549,20 @@ int runProgram() {
            previous = current;
            current->setBranch1(br);
            path.push_back(1);
-           current = br;
+           if (!(br->isEnding()))
+	    current = br;
            if (connection != INVALID_SOCKET) {
 #ifdef DEBUG
-            cout << "Sending UPLOAD_REQ:1:" << current->toString() << " to the server" << endl;
+            cout << "Sending U:1:" << current->toString() << " to the server" << endl;
 #endif
-            say(connection,"UPLOAD_REQ:1:" + current->toString() + '\n');
+              say(connection,"U:1:" + (current->hasBranch1() ? current->getBranch1()->toString() : current->toString()) + '\n');
            }
          }
 	 else {
            current = root;
            path.clear();
            if (connection != INVALID_SOCKET)
-            say(connection,"RETURN_REQ\n");
+            say(connection,"Q\n");
 	 }
 	}
         brPrint(*current);
@@ -475,7 +577,7 @@ int runProgram() {
       case 'o':
         if (connection != INVALID_SOCKET)
         {
-          say(connection,"PREV_REQ\n"); 
+          say(connection,"P\n"); 
         }
         if (current->getPrevious() == NULL)
           cout << "Unable to return to previous node" << endl;
@@ -491,9 +593,9 @@ int runProgram() {
         previous = NULL;
         if (connection != INVALID_SOCKET) {
 #ifdef DEBUG
-          cout << "Sending RETURN_REQ to the server" << endl;
+          cout << "Sending Q to the server" << endl;
 #endif
-          say(connection,"RETURN_REQ\n");
+          say(connection,"Q\n");
         }
 	brPrint(*root);
 	break;
@@ -570,7 +672,7 @@ int runProgram() {
               cout << "Enter filename: ";
               getline(cin,bscrResult);
               vector<int> bscr = bscrRead(bscrResult);
-              current = bscrFollow(bscr,root,third_tree);
+              current = bscrFollow(bscr,root,third_tree,connection);
               path = bscr;
             }
             else 
@@ -604,7 +706,7 @@ int runProgram() {
 	{
 	  current = third_tree;
           if (connection != INVALID_SOCKET) {
-            say(connection,"THREE_REQ\n");  
+            say(connection,"3\n");  
           }
 	  brPrint(*current);
 	  break;
@@ -620,3 +722,6 @@ int runProgram() {
   delete root;
   return 0;
 }
+#else
+int runProgram() { return 0; }
+#endif

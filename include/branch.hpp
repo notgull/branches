@@ -47,13 +47,16 @@ class branch {
     branch *branch1;
     branch *branch2;
     branch *prev;
+    bool isEnd;
   public:
     branch(string,string,string);
+    branch(string);
     bool hasBranch1();
     bool hasBranch2();
     string getMainText();
     string getText1();
     string getText2();
+    bool isEnding();
    
     branch *getBranch1();
     branch *getBranch2();

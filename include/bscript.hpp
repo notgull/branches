@@ -38,10 +38,20 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include <string>
 #include "branch.hpp"
+#include "iswin.hpp"
+#ifdef USING_WIN
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#endif 
+
 using namespace std;
 
 void bscrWrite(vector<int>,string);
 vector<int> bscrRead(string);
-branch *bscrFollow(vector<int>,branch *,branch *);
+#ifdef USING_WIN
+branch *bscrFollow(vector<int>,branch *,branch *,SOCKET);
+#else
+branch *bscrFollow(vector<int>,branch *,branch *,int);
+#endif
 
 #endif

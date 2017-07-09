@@ -42,9 +42,9 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${LINK_FLAGS}")
 
 # set version information
 set(br_VERSION "\"BETA\"")
-set(br_REVISION "2")
-set(br_MINOR_REVISION "3")
-set(br_CHANGELOG "\"-Added administrator console for server\\n-Added bscript\\n-Fixed a bug that could cause the server and the client to become offset\\n\"")
+set(br_REVISION "3")
+set(br_MINOR_REVISION "0")
+set(br_CHANGELOG "\"-Added an ending\\n-Made compilation times shorter\\n-Fixed a couple bugs\\n-Sanitized inputs\\n\"")
 
 # set server information
 if (COMPILE_SERVER)
