@@ -32,6 +32,7 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 
  */
 
+// contains one function: error, which is used for error handling
 #ifndef ERR_H
 #define ERR_H
 #include <string>

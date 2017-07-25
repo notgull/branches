@@ -37,6 +37,7 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 #include "iswin.hpp"
 using namespace std;
 
+// send a message to a server through a socket
 #ifdef USING_WIN
 int say(SOCKET sock, string msg) {
   return say_win(sock,msg.c_str());
@@ -47,6 +48,7 @@ int say(int sock, string msg) {
 }
 #endif
 
+// open a socket to communicate through
 #ifdef USING_WIN
 SOCKET openSocket(string host, string port) {
   return openSocket_win(host.c_str(),port.c_str());
@@ -57,6 +59,7 @@ int openSocket(string host, string port) {
 }
 #endif
 
+// read a message in through a socket
 #ifndef USING_WIN
 string readIn(int sock) {
 #else

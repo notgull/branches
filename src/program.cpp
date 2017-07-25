@@ -32,6 +32,8 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 
  */
 
+// this is the main file for the client side version of the program
+
 #include "err.hpp"
 #include "shortcuts.hpp"
 #include "program.hpp"
@@ -40,6 +42,7 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 #include "branches_config.hpp"
 #include "iswin.hpp"
 #include "bscript.hpp"
+#include "antiswear.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -78,6 +81,7 @@ void print_version(int verbose) {
     cout << "You are using: Branches Version " <<  br_VERSION << " Revision " << br_REVISION << " Minor Revision " << br_MINOR_REVISION << endl;
 }
 
+// print licensing info
 void print_license() {
   cout << "Branches, an expandable choose-your-own-adventure game" << endl;
   cout << "Copyright (C) 2017  John Nunley" << endl << endl;
@@ -157,11 +161,14 @@ branch *usr_input_branch() {
       endingBranch = true;
     cout << "Enter Main Text: ";
     getline(cin,main_text);
+    main_text = aswearFilter(main_text);
     if (!endingBranch) {
       cout << "Enter Option 1: ";
       getline(cin,b1);
+      b1 = aswearFilter(b1);
       cout << "Enter Option 2: ";
       getline(cin,b2);
+      b2 = aswearFilter(b2);
       newline();
       if (!(isValidInput(main_text) && isValidInput(b1) && isValidInput(b2))) {
         cout << "Invalid node" << endl;

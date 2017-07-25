@@ -46,12 +46,17 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 #include <sys/socket.h>
 #include <netdb.h>
 
+/*
+The purpose of this file is to act as wrappers for C functions found in arpa/inet.h and sys/socket.h
+*/
+
 // since err.hpp is C++, let's write our own function
 void error(char *msg) {
   fprintf(stderr,"%s: %s\n",msg,strerror(errno));
   exit(1);
 }
 
+// use the socket function to open a socket
 int openListenerSocket() {
   int s = socket(PF_INET,SOCK_STREAM,IPPROTO_TCP);
   if (s == -1)
@@ -59,6 +64,7 @@ int openListenerSocket() {
   return s;
 }
 
+// use socket, getaddrinfo, connect, and other UNIX functions to connect to a server
 int openSocket_c(const char *host, const char *port) {
   struct addrinfo *res;
   struct addrinfo hints;
@@ -78,6 +84,7 @@ int openSocket_c(const char *host, const char *port) {
   return d_sock;
 }
 
+// use send to send a message to a server
 int say_c(int socket, const char *msg) {
   int result = send(socket,msg,strlen(msg),0);
   if (result == -1)
@@ -85,6 +92,7 @@ int say_c(int socket, const char *msg) {
   return result;
 }
 
+// use setsockopt and bind to bind to a port, to be used after openListenerSocket
 void bindToPort(int socket, int port) {
   struct sockaddr_in name;
   name.sin_family = PF_INET;
@@ -98,6 +106,7 @@ void bindToPort(int socket, int port) {
     error("Unable to bind to socket");
 }
 
+// read a string from the server using recv
 int readIn_c(int socket, char *buffer, int length) {
   char *s = buffer;
   int slen = length;

@@ -38,16 +38,25 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 #include "iswin.hpp"
 #ifndef USING_WIN
 
+/*
+Since this is a C-based file, instead of a C++ based file, we need this wrapper so it is compatible with C++.
+However, if we are using a C compiler, which happens when we compile inet.c, this will throw an error. So I wrap it in __cplusplus so it will only be compiled in if we are using a C++ compiler.
+*/
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #include <string.h>
 
+// say something to a server
 int say_c(int socket, const char *msg);
+// bind to a port
 void bindToPort(int socket, int port);
+// open a client socket
 int openSocket_c(const char *host, const char *port);
+// open a listener socket
 int openListenerSocket();
+// read in a string
 int readIn_c(int socket, char *buffer, int length);
 
 #ifdef __cplusplus

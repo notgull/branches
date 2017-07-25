@@ -32,6 +32,7 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 
  */
 
+// I originally created this as a looping mechanism. its obselete now.
 #ifndef LOOP_H
 #define LOOP_H
 

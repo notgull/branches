@@ -32,6 +32,8 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 
  */
 
+
+// this file is dedicated to the purpose of using BScript
 #ifndef BSCRIPT_H
 #define BSCRIPT_H
 
@@ -46,8 +48,11 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace std;
 
+// write and read files of bscript
 void bscrWrite(vector<int>,string);
 vector<int> bscrRead(string);
+
+// usage of bscript
 #ifdef USING_WIN
 branch *bscrFollow(vector<int>,branch *,branch *,SOCKET);
 #else

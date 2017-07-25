@@ -41,6 +41,11 @@ using namespace std;
 
 #ifdef USING_WIN
 
+/*
+This file acts as a wrapper for WS2 functions, used in place of arpa/inet in DOS-based systems
+*/
+
+// initialize WS2 using WSAStartup
 int initialize_wininet() {
 //  cout << "Initializing wininet..." << endl;
   WSADATA wsaData;
@@ -57,6 +62,7 @@ int initialize_wininet() {
 struct sockaddr *ai_addr;
 int ai_addrlen;
 
+// open a listening socket with getaddrinfo and socket
 SOCKET openListenerSocket() {
   struct addrinfo *result = NULL, *ptr = NULL, hints;
   ZeroMemory(&hints,sizeof(hints));
@@ -84,6 +90,7 @@ SOCKET openListenerSocket() {
   return s;
 }
 
+// bind to a port with bind
 void bindToPort(SOCKET listener, int port) {
 //  cout << "Binding to port..." << endl;
   int iResult = bind(listener,ai_addr,ai_addrlen);
@@ -96,6 +103,7 @@ void bindToPort(SOCKET listener, int port) {
 //  cout << "Bound to port" << endl;
 }
 
+// connect to a server with connect and socket
 SOCKET openSocket_win(const char *host, const char *port) {
 //  cout << "Opening socket..." << endl;
   struct addrinfo *result = NULL;
@@ -139,6 +147,7 @@ SOCKET openSocket_win(const char *host, const char *port) {
   return connection;
 }
 
+// send a message to a server with send
 int say_win(SOCKET sock, const char *msg) {
   int result = send(sock,msg,strlen(msg),0);
   if (result == SOCKET_ERROR) {
@@ -150,6 +159,7 @@ int say_win(SOCKET sock, const char *msg) {
   return result;
 }
 
+// read a string from a server with recv
 int readIn_win(SOCKET sock, char *buffer, int length) {
   char *s = buffer;
   int slen = length;

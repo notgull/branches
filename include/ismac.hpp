@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  iswin.hpp
+ *       Filename:  ismac.hpp
  *
  *    Description:  
  *
  *        Version:  1.0
- *        Created:  06/22/2017 04:17:36 PM
+ *        Created:  07/23/2017 06:43:40 PM
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,14 +16,11 @@
  * =====================================================================================
  */
 
+#ifndef ISMAC_HPP
+#define ISMAC_HPP
+#include "branches_config.hpp"
 
-// this file is used to detect if the current OS is DOS or Unix based
-#ifndef IS_WIN_H
-#define IS_WIN_H
-
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-
-#define USING_WIN
-
+#if MACOS_ACTIVE == 1
+#define USING_MAC
 #endif
 #endif

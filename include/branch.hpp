@@ -32,25 +32,34 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 
  */
 
+// this file contains the branch class and its functions
 #ifndef BRANCH_H
 #define BRANCH_H
 
+// import the string and vector classes
 #include <string>
 #include <vector>
 using namespace std;
 
 class branch {
+  // inner variables
   private:
+    // main text, then text
     string txt;
     string b1;
     string b2;
+    // pointers to other branches
     branch *branch1;
     branch *branch2;
     branch *prev;
+    // is an ending
     bool isEnd;
+  // functions
   public:
+    // constructors for regular and ending branches, respectively
     branch(string,string,string);
     branch(string);
+    // functions to retreive inner variables
     bool hasBranch1();
     bool hasBranch2();
     string getMainText();
@@ -58,22 +67,35 @@ class branch {
     string getText2();
     bool isEnding();
    
+    // functions to retrieve pointers
     branch *getBranch1();
     branch *getBranch2();
     branch *getPrevious();
+
+    // count all elements in the branch
     int countElements();
   
+    // set the pointers
     void setBranch1(branch *);
     void setBranch2(branch *);
     void nullifyPrevious();
+    // note: i only allow the nullification of previous, so nobody can change its value
   
+    // convert branch to string
     string toString();
+   
+
+    // convert branch to a nice format
     string printWorthy();
+    // convert branch to a list
     vector<branch *> compileToList();
+    // clone the branch
     branch clone();
+    // get an isolated branch
     branch trim();
 };
 
+// misc functions
 void brPrint(branch);
 branch *brFromString(string);
 void brDeleteBranch(branch *);

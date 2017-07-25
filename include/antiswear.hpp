@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  iswin.hpp
+ *       Filename:  antiswear.hpp
  *
  *    Description:  
  *
  *        Version:  1.0
- *        Created:  06/22/2017 04:17:36 PM
+ *        Created:  07/24/2017 01:52:59 PM
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,14 +16,15 @@
  * =====================================================================================
  */
 
+#ifndef ANTISWEAR_HPP
+#define ANTISWEAR_HPP
 
-// this file is used to detect if the current OS is DOS or Unix based
-#ifndef IS_WIN_H
-#define IS_WIN_H
+#include <vector>
+#include <string>
+using namespace std;
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+vector<string> getSwears();
+vector<string> getReplacement();
+string aswearFilter(string input);
 
-#define USING_WIN
-
-#endif
 #endif

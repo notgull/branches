@@ -45,11 +45,17 @@ using namespace std;
 
 #pragma comment(lib, "Ws2_32.lib")
 
+// initialize WS2
 int initialize_wininet();
+// open a socket to a server
 SOCKET openSocket_win(const char *host, const char *port);
+// open a socket to a client
 SOCKET openListenerSocket();
+// bind a socket to a port
 void bindToPort(SOCKET listener, int port);
+// say something to a server
 int say_win(SOCKET sock, const char *msg);
+// read a string from a server
 int readIn_win(SOCKET sock, char *buffer, int length);
 
 #endif

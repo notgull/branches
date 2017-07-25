@@ -37,7 +37,9 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 #include "server.hpp"
 #include "branches_config.hpp"
 
+// program entry point, this is what runs when the program runs
 int main() {
+// imported from CMake variables. if we are running a server, use the runServer function. otherwise, use runProgram
 #if br_SERVER == 0
   return runProgram();
 #else

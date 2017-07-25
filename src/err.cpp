@@ -35,12 +35,21 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 #include <errno.h>
 #include "err.hpp"
+#include "ismac.hpp"
+#ifdef USING_MAC
+#include <unistd.h>
+#endif
 using namespace std;
 
+// exit the program and show the error message
 void error(string msg, int showErrno) {
   if (showErrno)
     fprintf(stderr, "%s: %s\n", msg.c_str(), strerror(errno));
   else
     fprintf(stderr, "%s\n",msg.c_str());
+#ifdef USING_MAC
+  _exit(1);
+#else
   exit(1);
+#endif
 }

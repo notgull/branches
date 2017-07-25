@@ -47,6 +47,8 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 using namespace std;
 
+// this file is used as a wrapper for either UNIX C socket functions, or Windows WSOCK2 socket functions
+
 #ifdef USING_WIN
 SOCKET openSocket(string host, string port);
 int say(SOCKET sock,string msg);

@@ -50,19 +50,29 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 #include <thread>
 
+#include "ismac.hpp"
 #include "iswin.hpp"
 #ifdef USING_WIN
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <io.h>
 #else
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <unistd.h>
 #endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
-#include <unistd.h>
 using namespace std;
+
+void uniexit(int code) {
+#ifdef USING_MAC
+  _exit(code);
+#else
+  exit(code);
+#endif
+}
 
 int port = 32001;
 #ifdef USING_WIN
@@ -220,7 +230,7 @@ void runServerPart(branch *root, branch *third_tree, int connection) {
     fprintf(stderr,"Shutdown failed: %d\n",WSAGetLastError());
     closesocket(connection);
     WSACleanup();
-    exit(1);
+    uniexit(1);
   }
   closesocket(connection);
 #else
@@ -345,7 +355,7 @@ void adminConsole(branch *root, branch *third_tree) {
 #else
         close(listener);
 #endif
-        exit(0);
+        uniexit(0);
         break;
       case 'f':
         if (yesno(0,"Do you really want to replace this node?")) {

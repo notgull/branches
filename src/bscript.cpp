@@ -40,6 +40,7 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 using namespace std;
 
+// write the list of ints to a file
 void bscrWrite(vector<int> instr, string filename) {
   ofstream output;
   output.open(filename);
@@ -49,6 +50,7 @@ void bscrWrite(vector<int> instr, string filename) {
   output.close();
 }
 
+// read a list of ints from a file
 vector<int> bscrRead(string filename) {
   vector<int> retV (0);
   ifstream input (filename);
@@ -66,6 +68,7 @@ vector<int> bscrRead(string filename) {
   return retV;
 } 
 
+// take a root branch and follow a list of ints to another branch
 #ifdef USING_WIN
 branch *bscrFollow(vector<int> values, branch *root, branch *third_tree, SOCKET sock) {
 #else

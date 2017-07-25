@@ -17,6 +17,7 @@ along with Branches.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
+// this file acts as a sort of "gate", allowing us to use CMake variables in our code
 #ifndef BRANCHES_CONFIGURATION_HPP_IN
 #define BRANCHES_CONFIGURATION_HPP_IN
 
