@@ -228,8 +228,8 @@ int runProgram() {
   int thing = 1;
   do {
     cout << "-1: Singleplayer Mode" << endl;
-    cout << "-2: Connect to TBranches Server" << endl;
-    cout << "-3: Connect to other server" << endl;
+    // cout << "-2: Connect to TBranches Server" << endl;
+    cout << "-2: Connect to server" << endl;
     newline();
     shell_tx();
     scanf("%4s",cmd);
@@ -240,7 +240,7 @@ int runProgram() {
       case '1':
 	thing = 0;
 	break;
-      case '3':
+      case '3': {
         thing = 0;
         getline(cin,dummy_geturl);
         cout << "Enter IP Address: ";
@@ -255,12 +255,12 @@ int runProgram() {
           getline(cin,portAddr);
         }
         alreadyHaveIPandPort = 1;
-      case '2': {
+      /* case '2': {
         thing = 0;
         if (!(alreadyHaveIPandPort)) {
           ipAddr = defaultServerIP;
           portAddr = defaultServerPort;
-        }
+        } */
         cout << "Connecting to " << ipAddr << ":" << portAddr << "..." << endl;
         thing = 0;
 #ifdef USING_WIN

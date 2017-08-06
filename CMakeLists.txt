@@ -41,10 +41,10 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COMPILE_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${LINK_FLAGS}")
 
 # set version information
-set(br_VERSION "\"BETA\"")
-set(br_REVISION "3")
-set(br_MINOR_REVISION "1")
-set(br_CHANGELOG "\"-Added a patch to prevent swearing\\n-Fixed a bug that prevented the Apple Edition from working\\n-Fixed several Windows-specific bugs\\n\"")
+set(br_VERSION "1")
+set(br_REVISION "0")
+set(br_MINOR_REVISION "0")
+set(br_CHANGELOG "\"-Release\\n\"")
 
 # set server information
 if (COMPILE_SERVER)
